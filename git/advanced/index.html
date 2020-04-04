@@ -56,57 +56,227 @@
 				<section id="best-practices">
 					<section data-markdown># Best Practices</section>
 					<section data-markdown>
-						##
+						<script type="text/template">
+							## Learning from the worst
+
+							```sh
+							git clone ssh://git@git.bdsu.it/repos/admin-scripts
+							# Passwort: bdsuit<3
+
+							cd admin-scripts
+							gitk $branch
+							# oder:
+							git log --online --graph $branch
+							```
+						</script>
+					</section>
+					<section data-markdown>
+						## Was wollen wir?
+
+						* Aussagekräftige Commit Messages
+						* möglichst wenig Änderungen pro Commit
+							* leichter zu reviewen
+						* nur zusammenhängende Änderungen
+						* möglichst vollständige Änderungen in einem Commit
+							* einzelne Features lassen sich einfacher übernehmen oder komplett rückgängig machen
+						* möglichst keine (unnötigen) Merge-Commits
+
+						=> _atomare_ Commits
 					</section>
 				</section>
 
 				<section id="basics">
 					<section data-markdown># Wiederholung: git Konzepte</section>
 					<section data-markdown>
-						##
+						## Was ist ein _Commit_?
+
+						_Ein Commit ist ein Snapshot getrackter Dateien im Working Tree_
+					</section>
+					<section data-markdown>
+						## Woraus besteht ein Commit?
+
+						* _Commit Message_: Beschreibung der Änderung
+						* _Autor_ (+Zeit): hat Änderungen verfasst
+						* _Committer_ (+Zeit): hat Änderungen eingetragen
+						* 0 oder mehr _Parents_:
+							* _genau_ ein Parent bei einfachen Commits
+							* 2 oder mehr bei einem Merge
+							* 0 für initialen Commit (root Node)
+						* _Tree_: Referenz zum Snapshot der Dateien
+						* Commit ID: sha1-Hash über alle oberen Attribute
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Woraus besteht ein Commit?
+
+							```sh
+							git show --format=raw --no-patch 7cfafe
+							```
+							```
+							commit 7cfafe6b96d177a46c95b054a7610d7e94192a2a
+							tree aebae8764209bb7acdeced9ef5bfbe0024b194f4
+							parent 119339b6491405871145ea480b4db99177864aa8
+							author Roman Anasal <roman.anasal@bdsu.de> 1585995143 +0200
+							committer Roman Anasal <roman.anasal@bdsu.de> 1585995143 +0200
+
+							    Betreffzeile des Commits
+
+							    Ausführlichere Beschreibung des Commits im Body nach
+							    einer Leerzeile
+							```
+
+							<div class="fragment">
+								=> Änderungen durch einen Commit werden dynamisch durch den Vergleich mit den Parents berechnet
+							</div>
+						</script>
+					</section>
+					<section data-markdown>
+						## Was sind _Branches_?
+
+						* _konzeptionell_: kompletter Verlauf, der zu einer bestimmten Version geführt hat
+						* _technisch_: Nur eine Referenz auf einen Commit -> Spitze des Branches
+							* _Branch master zeigt auf Commit 7cfafe_
+							* werden automatisch durch `git commit` aktualisiert
+							* Verlauf wird durch folgen der Parents erzeugt
+					</section>
+					<section data-markdown>
+						## Was ist der _Index_?
+
+						Der _Index_ ist die Staging Area, in der Änderungen hinzugefügt und
+						entfernt werden können, die mit einem Commit eingecheckt werden
+						sollen.
 					</section>
 				</section>
 
 				<section id="commits-erstellen">
 					<section data-markdown># Wie erstelle ich _gute_ Commits?</section>
 					<section data-markdown>
-						##
+						<script type="text/template">
+							## Alle Änderungen commiten
+							```sh
+							git commit -a # --all => alle Änderungen commiten
+
+							git add . # alle Änderungen zu Staging Area hinzufügen
+							git commit # Stand aus Staging Area commiten
+							```
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Nur bestimmte Änderungen übernehmen
+							```sh
+							git add datei # nur Änderungen aus angegebene(r) Datei(en) hinzufügen
+							git add -p # --patch: interaktiv Änderungen auswählen
+
+							git reset # alle Änderungen aus Index entfernen
+							git reset datei # Änderungen an "datei" aus Index entfernen
+							git reset -p # --patch: interaktiv Änderungen enternen aus Index
+
+							git commit -p # --patch: interaktiv Änderungen auswählen und commiten
+							```
+						</script>
 					</section>
 				</section>
 
 				<section id="commits-bearbeiten">
 					<section data-markdown># Bearbeiten von Commits</section>
 					<section data-markdown>
-						##
+						## Letzten Commit bearbeiten: der umständliche Weg
+						```sh
+						git reset HEAD~1 # aktuellen Branch einen Commit zurücksetzen
+						# aktueller Stand der Dateien im Working Tree bleibt erhalten
+
+						# gewünschte Änderungen vornehmen/hinzufügen
+						git commit -a # neuen Commit erstellen
+						```
+					</section>
+					<section data-markdown>
+						## Letzten Commit bearbeiten: der einfache Weg
+						```sh
+						git commit --amend # Änderungen aus Index zu letztem Commit hinzufügen
+						```
+					</section>
+					<section data-markdown>
+						## Commits rückgängig machen
+						```sh
+						# neuen Commit erstellen, der die Änderungen des
+						# letzten Commits (HEAD) rückgängig macht
+						git revert HEAD
+						```
 					</section>
 				</section>
 
 				<section id="history-rewrite">
 					<section data-markdown># Rewriting History like a Pro</section>
 					<section data-markdown>
-						##
+						## mehrere Commits interaktiv bearbeiten
+						```sh
+						git rebase -i HEAD~5 # Editor mit den 5 letzten Commits öffnen
+
+						# Commits können einfach übernommen werden,
+						# die Reihenfolge geändert,
+						# Commits entfernt,
+						# zum Bearbeiten auswählen
+						# zum Zusammenführen mit vorherigem Commit ausgewählt werden
+						```
 					</section>
+					<section data-background-iframe="https://learngitbranching.js.org/?NODEMO" data-background-interactive data-background-color="#fff"></section>
+					<section data-background-iframe="http://git-school.github.io/visualizing-git/" data-background-interactive data-background-color="#fff"></section>
 				</section>
 
 				<section id="arbeit-unterbrechen">
 					<section data-markdown># Arbeit unterbrechen</section>
 					<section data-markdown>
-						##
+						## aktuellen Stand _kurz_ zur Seite stellen
+						```sh
+						git stash # alle Änderungen auf "stash" legen und entfernen
+
+						git stash apply # gespeicherte Änderungen von stash wiederherstellen
+						```
+					</section>
+					<section data-markdown>
+						## separaten Working Tree erstellen
+						```sh
+						git worktree add pfad/zu/neuem/ordner
+						cd pfad/zu/neuem/ordner
+						# normal arbeiten wie in neuem Clone
+
+						# nach erledigter Arbeit im Originalordner
+						git worktree remove pfad/zu/neuem/ordner
+						```
 					</section>
 				</section>
 
 				<section id="debugging">
 					<section data-markdown># Debugging mit git</section>
 					<section data-markdown>
-						##
+						## Herausfinden, woher eine bestimmte Zeile stammt
+						```sh
+						git blame datei
+						# zu jeder Zeile wird der Commit angegeben,
+						# in der sie erstellt wurde
+						```
+					</section>
+					<section data-markdown>
+						## Die Änderung finden, die einen Bug verursacht hat
+						```sh
+						git bisect start
+						git bisect bad HEAD # aktuelle Version ist defekt
+						git bisect good HEAD~1 # letzte bekannte gute Version angeben
+
+						# git springt automatisch zum Commit zwischen god und bad
+						# manuell Code testen
+						git bisect good # getesteter Commit funktioniert noch
+						git bisect bad # getester Commit ist bereits defekt
+
+						# nachdem fehlerhafter Commit gefunden wurde
+						git bisect reset
+						```
 					</section>
 				</section>
 
 				<section id="tipps+tricks">
 					<section data-markdown># Tipps & Tricks</section>
-					<section data-markdown>
-						##
-					</section>
 				</section>
 			</div>
 		</div>
