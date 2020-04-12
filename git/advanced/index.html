@@ -46,12 +46,7 @@
 						* [Debugging mit git](#debugging)
 						* [Tipps & Tricks](#tipps+tricks)
 					</section>
-					<section data-markdown>
-						## Vorgehen
-						* Dieser Workshop ist interaktiv!
-					</section>
 				</section>
-
 
 				<section id="best-practices">
 					<section data-markdown># Best Practices</section>
@@ -92,7 +87,7 @@
 
 						_Ein Commit ist ein Snapshot getrackter Dateien im Working Tree_
 					</section>
-					<section data-markdown>
+					<section id="basics-commit" data-markdown>
 						## Woraus besteht ein Commit?
 
 						* _Commit Message_: Beschreibung der Änderung
@@ -137,7 +132,7 @@
 						* _technisch_: Nur eine Referenz auf einen Commit -> Spitze des Branches
 							* _Branch master zeigt auf Commit 7cfafe_
 							* werden automatisch durch `git commit` aktualisiert
-							* Verlauf wird durch folgen der Parents erzeugt
+							* Verlauf wird durch Folgen der Parents erzeugt
 					</section>
 					<section data-markdown>
 						## Was ist der _Index_?
@@ -167,6 +162,7 @@
 							```sh
 							git add datei # nur Änderungen aus angegebene(r) Datei(en) hinzufügen
 							git add -p # --patch: interaktiv Änderungen auswählen
+							git add -N datei # "datei" aber noch *nicht den Inhalt* zu Index hinzufügen/vormerken
 
 							git reset # alle Änderungen aus Index entfernen
 							git reset datei # Änderungen an "datei" aus Index entfernen
@@ -193,15 +189,18 @@
 					<section data-markdown>
 						## Letzten Commit bearbeiten: der einfache Weg
 						```sh
+						# Änderungen vornehmen
 						git commit --amend # Änderungen aus Index zu letztem Commit hinzufügen
 						```
 					</section>
 					<section data-markdown>
 						## Commits rückgängig machen
 						```sh
-						# neuen Commit erstellen, der die Änderungen des
+						# *neuen Commit erstellen*, der die Änderungen des
 						# letzten Commits (HEAD) rückgängig macht
 						git revert HEAD
+
+						# in der History bleibt die Änderung+Rückgängig machen erhalten
 						```
 					</section>
 				</section>
@@ -220,8 +219,62 @@
 						# zum Zusammenführen mit vorherigem Commit ausgewählt werden
 						```
 					</section>
-					<section data-background-iframe="https://learngitbranching.js.org/?NODEMO" data-background-interactive data-background-color="#fff"></section>
-					<section data-background-iframe="http://git-school.github.io/visualizing-git/" data-background-interactive data-background-color="#fff"></section>
+					<section data-markdown>
+						## frühere Commits ändern
+						```sh
+						git commit --fixup=HEAD~3 # Änderungen für HEAD~3 vormerken
+						# es wird ein neuer Commit erstellt mit Commit Betreff
+						# "fixup! " + Commit Betreff von HEAD~3
+
+						git rebase -i --autosquash HEAD~5 # fixup anwenden
+						# fixup!-Commit wird direkt nach entsprechenden Commit sortiert
+						# und per fixup mit diesem zusammengeführt
+
+						# HEAD~5 da nun ein Commit dazugekommen ist und
+						# der zu ändernde Commit auch bearbeitet werden muss
+						```
+					</section>
+					<section data-markdown>
+						## Änderungen aus einem anderen Branch/Commit übernehmen
+						```sh
+						git cherry-pick 7cfafe # Commit 7cfafe auf HEAD erneut anwenden
+
+						git checkout 7cfafe -- datei # "datei" im Zustand von 7cfafe auschecken
+						git checkout -p 7cfafe # interaktiv Zustand (teilweise) auschecken
+
+						# aktuellen Branch auf Stand von master zurücksetzen und
+						# die letzten 5 Commits *dort* erneut anwenden
+						git rebase HEAD~5 --onto master
+						```
+					</section>
+					<section data-markdown>
+						## Commits automatisiert bearbeiten: git filter-branch
+						```sh
+						# E-Mail des Autors für *alle* Commits im Verlauf von HEAD setzen
+						git filter-branch --env-filter 'GIT_AUTHOR_EMAIL="$GIT_COMMITTER_EMAIL"' HEAD
+
+						# eine Datei (passwords.txt) aus allen Commits löschen
+						git filter-branch --tree-filter 'rm passwords.txt' HEAD
+
+						# einen String in allen Commit Messages ersetzen
+						git filter-branch --msg-filter 'sed "s/mypassword/example/g"'
+						```
+					</section>
+					<section data-markdown>
+						## Vorsicht beim Ändern der Geschichte!
+
+						* jede Änderung an einem Commit [ändert seinen Hash](#basics-commit)
+						* Commit enthält Hash der Eltern
+						* Änderungen der Eltern ändert auch den Commit
+
+						=> **jede** Änderung ändert auch **alle** folgenden Commits
+
+						Bei geteilten/öffentlichen Repositories kann das zu großer
+						Verwirrung führen.
+
+						=> bereits _geteilte_/_veröffentlichte_ History sollte nicht mehr
+						   geändert werden!
+					</section>
 				</section>
 
 				<section id="arbeit-unterbrechen">
@@ -230,8 +283,10 @@
 						## aktuellen Stand _kurz_ zur Seite stellen
 						```sh
 						git stash # alle Änderungen auf "stash" legen und entfernen
-
 						git stash apply # gespeicherte Änderungen von stash wiederherstellen
+
+						git checkout -f # alle Änderungen im Working Tree verwerfen
+						git clean # nicht-getrackte Dateien im Working Tree löschen
 						```
 					</section>
 					<section data-markdown>
@@ -255,6 +310,8 @@
 						git blame datei
 						# zu jeder Zeile wird der Commit angegeben,
 						# in der sie erstellt wurde
+
+						git show HEAD # Commit anzeigen inkl. geänderte Dateien
 						```
 					</section>
 					<section data-markdown>
@@ -262,7 +319,7 @@
 						```sh
 						git bisect start
 						git bisect bad HEAD # aktuelle Version ist defekt
-						git bisect good HEAD~1 # letzte bekannte gute Version angeben
+						git bisect good HEAD~10 # letzte bekannte gute Version angeben
 
 						# git springt automatisch zum Commit zwischen god und bad
 						# manuell Code testen
@@ -273,10 +330,119 @@
 						git bisect reset
 						```
 					</section>
+					<section data-markdown>
+						## Dateien durchsuchen
+						```sh
+						git grep muster # alle getrackten Dateien nach "muster" durchsuchen
+						# wie normales grep nur beschränkt auf getrackte Dateien
+
+						git grep muster master -- pfad
+						# Datei(en) unter "pfad" zum Stand von master nach "muster" durchsuchen
+
+						git show master:datei # Inhalt von "datei" zum Stand von master anzeigen
+						```
+					</section>
+					<section data-markdown>
+						## Änderungen untersuchen
+						```sh
+						git diff # Änderungen von INdex zu Working Tree anzeigen
+						git diff --staged # Änderungen von HEAD zu Index anzeigen
+
+						git diff -w # reine Whitespace-Änderungen ignorieren
+						# besonders praktisch bei großen Änderungen nur durch
+						# geändert Code-Einrückungen
+
+						git diff --color-words # nur geänderte Wörter farbig hervorheben
+
+						git diff master # Änderungen von master zu Working Tree
+						git diff HEAD..master # Änderungen von master zu HEAD
+						```
+					</section>
 				</section>
 
 				<section id="tipps+tricks">
 					<section data-markdown># Tipps & Tricks</section>
+					<section data-markdown>
+						## Autocomplete für die Kommandozeile
+
+						Mit richtig konfiguriertem Autocomplete kann man mit TAB sehr
+						einfach git-Befehle, verfügbare Parameter/Flags und Branch-Namen
+						vervollständigen.
+
+						Richtige Installation hängt sehr von Betriebssystem und Shell ab.
+						```sh
+						# Beispiele für Bash unter Linux
+						apt-get install git bash-completion # Ubuntu, Debain und Derivate
+						yum install git bash-completion # Red Hat, Fedora, CentOS und Derivate
+						```
+					</section>
+					<section data-markdown>
+						## Verlauf ansehen
+						```sh
+						# Commits im master Branch anzeigen, die Dateien in "pfad" geändert haben
+						git log master -- pfad
+						git log --oneline --graph # kompakte Historie mit Visualisierung
+
+						# Commits auflisten, die ein Branch/Tag/HEAD *referenziert* hat:
+						# Dies sind nicht zwingend die Eltern des Branches,
+						# sondern die zuvor von dem Namen referenzierten Branch-*Spitzen*
+						git reflog
+						git reflog master
+
+						# Datum im ISO-Format anzeigen, wann der Branch einen Commit referenziert
+						git reflog --date=iso
+						```
+					</section>
+					<section data-markdown>
+						## Commits referenzieren
+						```sh
+						git show refspec # Commit anzeigen, auf den "refspec" verweist:
+						# * Branch- oder Tag-Name
+						# * vollständiger SHA1-Hash
+						# * abgekürzter SHA1-Hash: eindeutiger Anfang eines Hash im Repo
+
+						# Vorgänger und Eltern referenzieren
+						git show refspec~3 # 3. Vorgänger (Parent 3 Generationen voher)
+						git show refspec^ # 1. direkter Parent
+						git show refspec^2 # 2. direkter Parent, nur bei Merge-Commits
+						git show refspec^2~3 # 3. Vorgänger des 2. Parents
+
+						# frühere Branch-Spitzen referenzieren -> git reflog
+						git show refspec@{4} # Commit auf den "refspec" als 4. letztes gezeigt hat
+						git show refspec@{yesterday} # Commit auf den "refspec" gestern gezeigt hat
+						```
+					</section>
+					<section data-markdown>
+						## Aliase definieren
+						```sh
+						# eigene git-Befehle als Alias definieren
+						git config alias.lg 'log --oneline --graph'
+						git lg master # führt 'git log --oneline --graph master' aus
+
+						git config alias.k '!gitk' # '!' evaluiert Zeile in der Shell
+						git k # führt 'gitk' als externes Programm aus
+						```
+					</section>
+					<section data-markdown>
+						## Details zu einem Befehl nachschlagen
+						```sh
+						git help bisect
+						git help cherry-pick
+						git help clean
+						git help config
+						git help diff
+						git help filter-branch
+						git help grep
+						git help log
+						git help rebase
+						git help reflog
+						git help reset
+						git help revert
+						git help stash
+						git help worktree
+						# ...
+						```
+					</section>
 				</section>
 			</div>
 		</div>
