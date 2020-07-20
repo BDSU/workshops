@@ -1,0 +1,822 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Webserver-Konfiguration für Einsteiger</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/league.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section id="intro">
+					<section data-markdown># Webserver-Konfiguration für Einsteiger</section>
+					<section data-markdown>
+						## Inhalt
+						Konfiguration eines Apache Webservers
+
+						* [Konfiguration: wo und wie bearbeiten?](#configs)
+						* [Mehrere Domains konfigurieren](#vhosts)
+						* [HTTPS-Verschlüsselung](#certbot)
+						* [Ordner-spezifische Einstellungen](#htaccess)
+						* [Zugang einschränken](#auth)
+						* [URLs umleiten](#rewrites)
+						* [Apache als Reverse Proxy](#reverse-proxy)
+					</section>
+				</section>
+
+				<section id="configs">
+					<section data-markdown># Konfiguration Basics</section>
+					<section data-markdown>
+						## Die Konfigurationsdateien
+						* Alle Konfigurationen sind im Ordner
+							* `/etc/apache2/` (u.a. Debian, Ubuntu)
+							* `/etc/httpd/` (u.a. RedHat, CentOS)
+						* Hauptdatei ist `apache2.conf` bzw. `httpd.conf`
+						* Konfiguration sind Textdateien
+							* -> mit beliebigem Editor bearbeitbar
+						* Nach Änderung Konfiguration neu laden, z.B.:
+							* `systemctl reload apache2`
+							* `apache2ctl graceful`
+							* `/etc/init.d/apache2 restart`
+					</section>
+					<section data-markdown style="font-size: 70%">
+						<script type="text/template">
+							Standard `/etc/apache2/apache2.conf` unter Debian und Ubuntu:
+							~~~apache
+							# This is the main Apache server configuration file.  It contains the
+							# configuration directives that give the server its instructions.
+							# See http://httpd.apache.org/docs/2.4/ for detailed information about
+							# the directives and /usr/share/doc/apache2/README.Debian about Debian specific
+							# hints.
+							#
+							#
+							# Summary of how the Apache 2 configuration works in Debian:
+							# The Apache 2 web server configuration in Debian is quite different to
+							# upstream's suggested way to configure the web server. This is because Debian's
+							# default Apache2 installation attempts to make adding and removing modules,
+							# virtual hosts, and extra configuration directives as flexible as possible, in
+							# order to make automating the changes and administering the server as easy as
+							# possible.
+
+							# It is split into several files forming the configuration hierarchy outlined
+							# below, all located in the /etc/apache2/ directory:
+							#
+							#	/etc/apache2/
+							#	|-- apache2.conf
+							#	|	`--  ports.conf
+							#	|-- mods-enabled
+							#	|	|-- *.load
+							#	|	`-- *.conf
+							#	|-- conf-enabled
+							#	|	`-- *.conf
+							# 	`-- sites-enabled
+							#	 	`-- *.conf
+							#
+							#
+							# * apache2.conf is the main configuration file (this file). It puts the pieces
+							#   together by including all remaining configuration files when starting up the
+							#   web server.
+							#
+							# * ports.conf is always included from the main configuration file. It is
+							#   supposed to determine listening ports for incoming connections which can be
+							#   customized anytime.
+							#
+							# * Configuration files in the mods-enabled/, conf-enabled/ and sites-enabled/
+							#   directories contain particular configuration snippets which manage modules,
+							#   global configuration fragments, or virtual host configurations,
+							#   respectively.
+							#
+							#   They are activated by symlinking available configuration files from their
+							#   respective *-available/ counterparts. These should be managed by using our
+							#   helpers a2enmod/a2dismod, a2ensite/a2dissite and a2enconf/a2disconf. See
+							#   their respective man pages for detailed information.
+							#
+							# * The binary is called apache2. Due to the use of environment variables, in
+							#   the default configuration, apache2 needs to be started/stopped with
+							#   /etc/init.d/apache2 or apache2ctl. Calling /usr/bin/apache2 directly will not
+							#   work with the default configuration.
+
+
+							# Global configuration
+							#
+
+							#
+							# ServerRoot: The top of the directory tree under which the server's
+							# configuration, error, and log files are kept.
+							#
+							# NOTE!  If you intend to place this on an NFS (or otherwise network)
+							# mounted filesystem then please read the Mutex documentation (available
+							# at <URL:http://httpd.apache.org/docs/2.4/mod/core.html#mutex>);
+							# you will save yourself a lot of trouble.
+							#
+							# Do NOT add a slash at the end of the directory path.
+							#
+							#ServerRoot "/etc/apache2"
+
+							#
+							# The accept serialization lock file MUST BE STORED ON A LOCAL DISK.
+							#
+							#Mutex file:${APACHE_LOCK_DIR} default
+
+							#
+							# The directory where shm and other runtime files will be stored.
+							#
+
+							DefaultRuntimeDir ${APACHE_RUN_DIR}
+
+							#
+							# PidFile: The file in which the server should record its process
+							# identification number when it starts.
+							# This needs to be set in /etc/apache2/envvars
+							#
+							PidFile ${APACHE_PID_FILE}
+
+							#
+							# Timeout: The number of seconds before receives and sends time out.
+							#
+							Timeout 300
+
+							#
+							# KeepAlive: Whether or not to allow persistent connections (more than
+							# one request per connection). Set to "Off" to deactivate.
+							#
+							KeepAlive On
+
+							#
+							# MaxKeepAliveRequests: The maximum number of requests to allow
+							# during a persistent connection. Set to 0 to allow an unlimited amount.
+							# We recommend you leave this number high, for maximum performance.
+							#
+							MaxKeepAliveRequests 100
+
+							#
+							# KeepAliveTimeout: Number of seconds to wait for the next request from the
+							# same client on the same connection.
+							#
+							KeepAliveTimeout 5
+
+
+							# These need to be set in /etc/apache2/envvars
+							User ${APACHE_RUN_USER}
+							Group ${APACHE_RUN_GROUP}
+
+							#
+							# HostnameLookups: Log the names of clients or just their IP addresses
+							# e.g., www.apache.org (on) or 204.62.129.132 (off).
+							# The default is off because it'd be overall better for the net if people
+							# had to knowingly turn this feature on, since enabling it means that
+							# each client request will result in AT LEAST one lookup request to the
+							# nameserver.
+							#
+							HostnameLookups Off
+
+							# ErrorLog: The location of the error log file.
+							# If you do not specify an ErrorLog directive within a <VirtualHost>
+							# container, error messages relating to that virtual host will be
+							# logged here.  If you *do* define an error logfile for a <VirtualHost>
+							# container, that host's errors will be logged there and not here.
+							#
+							ErrorLog ${APACHE_LOG_DIR}/error.log
+
+							#
+							# LogLevel: Control the severity of messages logged to the error_log.
+							# Available values: trace8, ..., trace1, debug, info, notice, warn,
+							# error, crit, alert, emerg.
+							# It is also possible to configure the log level for particular modules, e.g.
+							# "LogLevel info ssl:warn"
+							#
+							LogLevel warn
+
+							# Include module configuration:
+							IncludeOptional mods-enabled/*.load
+							IncludeOptional mods-enabled/*.conf
+
+							# Include list of ports to listen on
+							Include ports.conf
+
+
+							# Sets the default security model of the Apache2 HTTPD server. It does
+							# not allow access to the root filesystem outside of /usr/share and /var/www.
+							# The former is used by web applications packaged in Debian,
+							# the latter may be used for local directories served by the web server. If
+							# your system is serving content from a sub-directory in /srv you must allow
+							# access here, or in any related virtual host.
+							<Directory />
+								Options FollowSymLinks
+								AllowOverride None
+								Require all denied
+							</Directory>
+
+							<Directory /usr/share>
+								AllowOverride None
+								Require all granted
+							</Directory>
+
+							<Directory /var/www/>
+								Options Indexes FollowSymLinks
+								AllowOverride None
+								Require all granted
+							</Directory>
+
+							#<Directory /srv/>
+							#	Options Indexes FollowSymLinks
+							#	AllowOverride None
+							#	Require all granted
+							#</Directory>
+
+
+
+
+							# AccessFileName: The name of the file to look for in each directory
+							# for additional configuration directives.  See also the AllowOverride
+							# directive.
+							#
+							AccessFileName .htaccess
+
+							#
+							# The following lines prevent .htaccess and .htpasswd files from being
+							# viewed by Web clients.
+							#
+							<FilesMatch "^\.ht">
+								Require all denied
+							</FilesMatch>
+
+
+							#
+							# The following directives define some format nicknames for use with
+							# a CustomLog directive.
+							#
+							# These deviate from the Common Log Format definitions in that they use %O
+							# (the actual bytes sent including headers) instead of %b (the size of the
+							# requested file), because the latter makes it impossible to detect partial
+							# requests.
+							#
+							# Note that the use of %{X-Forwarded-For}i instead of %h is not recommended.
+							# Use mod_remoteip instead.
+							#
+							LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
+							LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+							LogFormat "%h %l %u %t \"%r\" %>s %O" common
+							LogFormat "%{Referer}i -> %U" referer
+							LogFormat "%{User-agent}i" agent
+
+							# Include of directories ignores editors' and dpkg's backup files,
+							# see README.Debian for details.
+
+							# Include generic snippets of statements
+							IncludeOptional conf-enabled/*.conf
+
+							# Include the virtual host configurations:
+							IncludeOptional sites-enabled/*.conf
+
+							# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+							~~~
+
+							* [`User`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#user) / [`Group`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#group): User/Gruppe mit dessen Rechten Apache läuft
+							* [`Listen`](https://httpd.apache.org/docs/2.4/en/mod/mpm_common.html#listen): Welche Port(s)/IP(s) Apache verwendet
+							* [`ErrorLog`](https://httpd.apache.org/docs/2.4/en/mod/core.html#errorlog): Pfad zur Log-Datei für Fehler
+							* [`Include`](https://httpd.apache.org/docs/2.4/en/mod/core.html#include) / [`IncludeOptional`](https://httpd.apache.org/docs/2.4/en/mod/core.html#includeoptional): Einbinden weiterer Configs
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Die Ordnerstruktur
+							Unter Debian-basierten Distributionen sind die Configs **per Konvention** auf mehrere Dateien vergeteilt:
+							* `*-available/*.conf`: verfügbare Configs
+							* `*-enabled/*.conf`: eingebundene Configs
+								* als Symlink zu `*-available/*.conf`
+							* Configs können per Befehl verlinkt/entfernt werden:
+								* `a2enconf` / `a2enmod` / `a2ensite`
+								* `a2disconf` / `a2dismod` / `a2dissite`
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Die Ordnerstruktur
+							Unter Debian-basierten Distributionen sind die Configs **per Konvention** auf mehrere Dateien vergeteilt:
+							* `conf-*/*.conf`: globale Konfigurationen
+							* `mods-*/*.conf`: Erweiterungsmodule
+							* `sites-*/*.conf`: [Virtual Hosts](#vhosts)
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Tipp für Config-Änderungen
+
+							Um unangenehme Überraschungen beim Neuladen zu verhindern, kann
+							die aktuelle Config zuerst mit `apache2ctl` verifiziert werden:
+							~~~sh
+							apache2ctl -t
+							> Syntax OK
+							~~~
+						</script>
+					</section>
+				</section>
+
+				<section id="vhosts">
+					<section data-markdown>
+						# Virtual Hosts
+						## Viele Domains, ein Server
+					</section>
+					<section data-markdown>
+						## Virtual Hosts
+
+						Um auf einem Server mehrere Webseiten unter verschiedenen Domains
+						betreiben zu können, werden [_Virtual Hosts_](https://httpd.apache.org/docs/2.4/en/vhosts/)
+						verwendet.
+
+						Damit können für unterschiedliche Domains, die die Clients anfragen,
+						unterschiedliche Konfigurationen angegegben werden.
+
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Virtual Hosts - Beispiel
+							~~~apache
+							<VirtualHost *:80> # IP:Port für diesen Virtual Host
+								# primärer Hostname für diesen Virtual Host
+								ServerName web.bdsu.it
+								# weitere Aliase/Wildcards
+								ServerAlias *.web.bdsu.it inter.web.bdsu.it
+
+								# Dateisystempfad für diese Domain(s)
+								# http://web.bdsu.it/foo -> /var/www/web.bdsu.it/foo
+								DocumentRoot /var/www/web.bdsu.it/
+
+								<Directory "/var/www/web.bdsu.it">
+									# Zugriff auf diesen Ordner freigeben
+									Require all granted
+								</Directory>
+							</VirtualHost>
+							~~~
+						</script>
+					</section>
+					<section data-markdown>
+						## Virtual Hosts - Auflösung
+
+						Die _VirtualHost_-Abschnitte werden in der Reihenfolge, in der sie
+						definiert/eingebunden werden getestet. Der erste Block mit passendem
+						[`ServerName`](https://httpd.apache.org/docs/2.4/en/mod/core.html#servername) bzw.
+						[`ServerAlias`](https://httpd.apache.org/docs/2.4/en/mod/core.html#serveralias)
+						wird verwendet.
+
+						Wird kein passender Block gefunden, wird der **erste**
+						_VirtualHost_-Block verwendet.
+					</section>
+					<section>
+							<h2>Tipp: eigene Logs für Virtual Hosts</h2>
+							<pre><code data-trim class="hljs" data-line-numbers="6-7">
+								&lt;VirtualHost *:80&gt;
+									ServerName web.bdsu.it
+									ServerAlias *.web.bdsu.it inter.web.bdsu.it
+									DocumentRoot /var/www/web.bdsu.it/
+
+									ErrorLog ${APACHE_LOG_DIR}/web.bdsu.it_error.log
+									CustomLog ${APACHE_LOG_DIR}/web.bdsu.it_access.log combined
+
+									&lt;Directory "/var/www/web.bdsu.it"&gt;
+										Require all granted
+									&lt;/Directory&gt;
+								&lt;/VirtualHost&gt;
+							</code></pre>
+					</section>
+				</section>
+
+				<section id="certbot">
+					<section data-markdown>
+						# Sichere HTTPS-Verbindungen
+						## Konfiguration und Zertifikatsverwaltung mit Certbot
+					</section>
+					<section data-markdown>
+						## HTTPS-Zertifikate
+
+						Für eine verschlüsselte HTTPS-Verbindung benöigt der Webserver ein
+						Zertifikate für die entsprechende Domain(s).
+
+						Damit das Zertifikat vom Browser als sicher erkannt wird, muss es
+						von einer vertrauenswürdigen _Certification Authority_ (CA)
+						ausgestellt worden sein, z.B. [_Let's Encrypt_](https://letsencrypt.org/).
+
+						Die CA muss dabei überprüfen, dass man der rechtmäßige Eigentümer
+						der Domain(s) ist.
+					</section>
+					<section data-markdown>
+						## _Domain Validated_-Zertifikate
+
+						Um die Überprüfung der Domains zu automatisieren
+						[implementiert _Let's Encrypt_ das ACME-Protokoll](https://letsencrypt.org/how-it-works/#domain-validation):
+
+						Um zu beweisen, dass man den Webserver einer Domain kontrolliert,
+						muss man vorgegebene Inhalte kryptografisch signieren und unter
+						einer festgelegten URL der Domain ablegen
+						(unter `/.well-known/acme-challenge/`).
+					</section>
+					<section data-markdown>
+						## Zertifikate mit Certbot ausstellen
+
+						Das Tool [Certbot](https://certbot.eff.org/) bietet eine sehr
+						einfache Kommandozeile, um Zertifikate mit dem ACME-Protokoll zu
+						erstellen:
+						~~~sh
+						certbot certonly --webroot -w /var/www/web.bdsu.it/ -d web.bdsu.it
+						~~~
+
+						Mit `-w` gibt man den [`DocumentRoot`](https://httpd.apache.org/docs/2.4/de/mod/core.html#documentroot)
+						für die folgende/n Domain/s an, die mit `-d` angegeben werden.
+
+						Es können mehrere Domains und mit unterschiedlichen `DocumentRoot`s
+						für ein gemeinsames Zertifikat angegeben werden, siehe [Doku](https://certbot.eff.org/docs/using.html#webroot).
+					</section>
+					<section data-markdown>
+						## Zertifikate mit Certbot ausstellen
+						~~~sh
+						certbot certonly --webroot -w /var/www/web.bdsu.it/ -d web.bdsu.it
+						~~~
+
+						`certbot` kümmert sich dann über die Kommunikation mit _Let's Encrypt_
+						und die Verifizierung der Domain:
+
+						Die signierten Dateien werden unter `/var/www/web.bdsu.it/.well-known/acme-challenge` im
+						erstellt und danach wieder aufgeräumt und müssen dann über
+						`http://web.bdsu.it/.well-known/acme-challenge/` erreichbar sein.
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## HTTPS in Apache konfigurieren
+
+							~~~apache
+							<VirtualHost *:443> # auf HTTPS-Port lauschen
+								ServerName web.bdsu.it
+								DocumentRoot /var/www/web.bdsu.it/
+
+								SSLCertificateFile /etc/letsencrypt/live/web.bdsu.it/fullchain.pem
+								SSLCertificateKeyFile /etc/letsencrypt/live/web.bdsu.it/privkey.pem
+								Include /etc/letsencrypt/options-ssl-apache.conf
+								#...
+							</VirtualHost>
+							~~~
+							* [`SSLCertificateFile`](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslcertificatefile): Pfad zum ausgestellten Zertifikat
+							* [`SSLCertificateKeyFile`](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslcertificatekeyfile): Pfad zum geheimen Schlüssel des Zertifikats
+							* [`Include`](https://httpd.apache.org/docs/2.4/en/mod/core.html#include): Einbinden empfohlener SSL-Configs
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Zertifikate erneuern
+
+							Die Zertifikate von _Let's Encrypt_ sind nur 90 Tage gültig, können
+							mit `certbot` aber einfach erneuert werden:
+							~~~sh
+							certbot renew
+							~~~
+
+							Beim Erstellen wurde die Konfiguration (i.e. Domain und
+							DocumentRoot) gespeichert, womit `cerbot` die Domain zum Verlängern
+							wieder verifizieren kann.
+
+							Die Konfiguration kann man [**manuell** ändern](https://certbot.eff.org/docs/using.html#modifying-the-renewal-configuration-file)
+							in `/etc/letsencrypt/renewal/<domain>.conf`
+						</script>
+					</section>
+					<section data-markdown>
+						## Zertifikate automatisch erneuern
+
+						Bei der Installation erstellt `certbot` automatisch einen
+						[Cronjob](https://en.wikipedia.org/wiki/Cron), der zweimal täglich
+						ablaufende Zertifikate erneuert, siehe `/etc/cron.d/certbot` und
+						[Doku](https://certbot.eff.org/docs/using.html#automated-renewals).
+
+						Wird ein ablaufendes Zertifikat nicht rechtzeitig (ca. 20 Tag vor
+						Ablauf) erneuert, sendet außerdem _Let's Encrypt_ einen Reminder
+						per E-Mail an die bei der Einrichtung angegebene E-Mail.
+					</section>
+					<section data-markdown>
+						## Zertifikate verwalten
+						~~~sh
+						# Zertifikat neu ausstellen mit weiterer Domain
+						certbot certonly --webroot -w /var/www/web.bdsu.it/ -d web.bdsu.it -d inter.web.bdsu.it
+
+						# Zertifikate auflisten
+						certbot certificates
+
+						# Zertifikat widerrufen/deaktivieren
+						# (z.B. wenn Domain abgeschaltet)
+						certbot revoke --cert-name web.bdsu.it
+
+						# Zertifikat löschen
+						certbot delete --cert-name web.bdsu.it
+						~~~
+
+						Siehe [Doku für `cerbot revoke`](https://certbot.eff.org/docs/using.html#revoking-certificates).
+					</section>
+				</section>
+
+				<section id="htaccess">
+					<section data-markdown># Ordner-spezifische Einstellungen</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Hierarchie der Konfiguration
+
+							Viele Optionen können [auf verschiedenen Ebenen](https://httpd.apache.org/docs/2.4/en/mod/directive-dict.html#Context) angegeben werden:
+							* global (`apache2.conf`)
+							* in einem _&lt;VirtualHost&gt;_-Block
+							* in einem _&lt;Directory&gt;_-Block
+							* in lokaler Config-Datei im Ordner (`.htaccess`)
+
+							Die lokale `.htaccess`-Datei kann damit als Teil des Webprojektes
+							die systemweite Konfiguration auf Ordnerebene erweitern/überschreiben.
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## lokale Konfigurationen erlauben
+
+							~~~apache
+							AccessFileName .htaccess
+
+							<Directory "/var/www/web.bdsu.it">
+								# AllowOverride All
+								# AllowOverride None
+								AllowOverride FileInfo Options=Indexes
+							</Directory>
+							~~~
+
+							* [`AccessFileName`](https://httpd.apache.org/docs/2.4/en/mod/core.html#accessfilename): legt den Namen der lokalen Konfigurationsdatei fest
+							* [`AllowOverride`](https://httpd.apache.org/docs/2.4/en/mod/core.html#allowoverride): bestimmt welche Konfigurationen mit der lokalen Konfigurationsdatei überschrieben werden dürfen
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Ordner-spezifische `Options`
+
+							~~~apache
+							# System-Config
+							<Directory "/var/www/web.bdsu.it">
+								AllowOverride Options
+								Options All
+							</Directory>
+
+							# in /var/www/web.bdsu.it/.htaccess
+							# "Indexes" entfernen, "FollowSymLinks" hinzufügen
+							Options -Indexes +FollowSymLinks
+							~~~
+
+							* [`Options`](https://httpd.apache.org/docs/2.4/en/mod/core.html#options): legt Optionen für aktuellen Ordner fest, z.B.:
+								* `Indexes`: Indexseite für Ordnerinhalte generieren
+								* `FollowSymLinks`: [Symlinks](https://de.wikipedia.org/wiki/Symbolische_Verkn%C3%BCpfung) im Ordner folgen
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Indexseiten für Ordnerinhalte
+
+							~~~apache
+							<Directory "/var/www/web.bdsu.it">
+								Options Indexes
+								DirectoryIndex index.html index.php
+							</Directory>
+							~~~
+
+							[`DirectoryIndex`](https://httpd.apache.org/docs/2.4/en/mod/mod_dir.html#directoryindex)
+							legt den Namen für die Indexseite fest, die ausgeliefert wird, wenn ein Ordner aufgerufen wurde:
+							`http://web.bdsu.it/` -> `/var/www/web.bdsu.it/index.html`
+
+							Ist keine Indexseite vorhanden, wird eine generiert (`Options Indexes`).
+						</script>
+					</section>
+				</section>
+
+				<section id="auth">
+					<section data-markdown># Zugriff schützen</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Zugriff auf einen Ordner freigeben
+
+							~~~apache
+							<Directory "/var/www/web.bdsu.it">
+								Require all granted
+							</Directory>
+							~~~
+
+							[`Require`](https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#require)
+							legt fest, ob auf Ordner/Dateien zugegriffen werden kann.
+
+							Mit `Require all denied` kann der Webzugriff auf bestimmte
+							(Unter-)Ordner unterbunden werden.
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## einfachen Passwortschutz hinzufügen
+
+							~~~apache
+							# in <Directory> oder .htaccess
+							AuthType Basic
+							AuthName "geschützter Bereich"
+							AuthBasicProvider file
+							AuthUserFile "/var/www/web.bdsu.it/.htpasswd"
+							Require valid-user
+							~~~
+
+							* [AuthType](https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype): Art der Authentifizierungsmethode
+							* [AuthBasicProvider](https://httpd.apache.org/docs/2.4/mod/mod_auth_basic.html#authbasicprovider) / [AuthUserFile](https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html#authuserfile):
+								einfache Datei als "Benutzerdatenbank"
+							* [AuthName](https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authname): Prompt für den Benutzer
+						</script>
+					</section>
+					<section data-markdown>
+						## "Benutzerdatenbank" erstellen
+
+						Die Datei mit den Benutzern kann mit dem Tool
+						[`htpasswd`](https://httpd.apache.org/docs/2.4/programs/htpasswd.html)
+						erstellt werden:
+
+						~~~sh
+						htpasswd -bc /var/www/web.bdsu.it/.htpasswd mmustermann s3cReT
+						> Adding password for user mmustermann
+
+						# Inhalt anzeigen lassen
+						cat /var/www/web.bdsu.it/.htpasswd
+						> mmustermann:$apr1$lBqMeCZE$mmn23SmhR.5DKHf9TTzbb/
+						~~~
+					</section>
+				</section>
+
+				<section id="rewrites">
+					<section data-markdown># Umleitungen und URL-Rewrites</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Einfache Redirects
+							~~~apache
+							<VirtualHost *:80>
+								ServerName web.bdsu.it
+								ServerAlias *.web.bdsu.it inter.web.bdsu.it
+
+								# temporäre Umleitung (302) für alle URLs unter /code/ an Browser senden
+								Redirect 302 /code/ https://github.com/BDSU/
+								# http://web.bdsu.it/code/workshops -> https://github.com/BDSU/workshops
+
+								# permanente Umleitung (301) auf HTTPS für alles andere
+								Redirect 301 / https://web.bdsu.it/
+								# http://web.bdsu.it/foo -> https://web.bdsu.it/foo
+							</VirtualHost>
+							~~~
+
+							Siehe:
+							* [`Redirect`](https://httpd.apache.org/docs/2.4/mod/mod_alias.html#redirect)
+							* [HTTP-Statuscodes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection)
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Fortgeschrittene Redirects
+							~~~apache
+							<VirtualHost *:80>
+								ServerName web.bdsu.it
+								ServerAlias *.web.bdsu.it inter.web.bdsu.it
+
+								# Rewrites aktivieren
+								RewriteEngine On
+
+								# nächste RewriteRule nur unter diesen Bedingungen anwenden
+								# angefragter Host beginnt nicht mit "inter"
+								RewriteCond %{HTTP_HOST} !^inter
+								# URL enthält "/code/"
+								RewriteCond %{REQUEST_URI} /code/
+								# alles nach "/code/" an neue URL anhängen, umleiten ([R])
+								# und keine weiteren Regeln anwenden ([L])
+								RewriteRule ^.*/code/(.*)$ https://github.com/BDSU/$1 [R,L]
+
+								# alles andere an statische URL weiterleiten
+								RewriteRule .* https://github.com/BDSU [R,L]
+							</VirtualHost>
+							~~~
+
+							Siehe:
+							[`RewriteCond`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewritecond),
+							[`RewriteRule`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewriterule) und
+							Doku zu [Remapping](https://httpd.apache.org/docs/2.4/rewrite/remapping.html)
+						</script>
+					</section>
+					<section data-markdown>
+						## Interne Redirects
+
+						Viele Frameworks/Webtools verwenden einen zentralen Einstiegspunkt
+						(z.B. `index.php`), um virtuelle URL-Pfade abzubilden:
+						~~~apache
+						# in System-Config oder .htaccess
+						RewriteEngine On
+
+						# wenn URL bereits mit index.php beginnt, nichts ändern
+						RewriteRule ^/index\.php$ - [L]
+
+						# nur wenn die URL keine existierende Datei (-f)/Ordner (-d) ist
+						RewriteCond %{REQUEST_FILENAME} !-f
+						RewriteCond %{REQUEST_FILENAME} !-d
+
+						# URL *intern* zu index.php ändern
+						RewriteRule . /index.php [L]
+						~~~
+					</section>
+				</section>
+
+				<section id="reverse-proxy">
+					<section data-markdown># Apache als Reverse Proxy</section>
+					<section data-markdown>
+						## Apache als Reverse Proxy
+
+						Einige Webtools laufen mit einem eigenen Webserver - nehmen wir als
+						Beispiel eine Node.js-Anwendung, die unter `http://localhost:3000/`
+						erreichbar ist.
+
+						Vor solche Anwendungen kann Apache als [Reverse Proxy](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html)
+						geschalten werden, um bestimmte Domains/URLs auf diese Anwendungen
+						weiterzuleiten und/oder HTTPS dazwischenzuschalten.
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Apache als Reverse Proxy
+							~~~apache
+							<VirtualHost *:80>
+								ServerName web.bdsu.it
+								ServerAlias *.web.bdsu.it inter.web.bdsu.it
+
+								# alle Anfragen als Proxy weiterleiten
+								ProxyPass / http://localhost:3000/
+
+								# in Anwort-Header automatisch die Domain durch eigene Domain ersetzen
+								ProxyPassReverse /          http://localhost:3000/
+							</VirtualHost>
+							~~~
+
+							Siehe:
+							[`ProxyPass`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypass) und
+							[`ProxyPassReverse`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypassreverse)
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Apache als Reverse Proxy mit Web Sockets
+							~~~apache
+							<VirtualHost *:80>
+								ServerName web.bdsu.it
+								ServerAlias *.web.bdsu.it inter.web.bdsu.it
+
+								RewriteEngine On
+								# Web Socket Verbindungen als solche weiterleiten
+								RewriteCond %{HTTP:Upgrade} =websocket [NC]
+								RewriteRule /(.*)           ws://localhost:3000/$1 [P,L]
+
+								# alle anderen Anfragen als HTTP weiterleiten
+								RewriteCond %{HTTP:Upgrade} !=websocket [NC]
+								RewriteRule /(.*)           http://localhost:3000/$1 [P,L]
+
+								# in Anwort-Header automatisch die Domain durch eigene Domain ersetzen
+								ProxyPassReverse /          http://localhost:3000/
+							</VirtualHost>
+							~~~
+
+							Siehe:
+							[`RewriteRule`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewriterule) und
+							[`ProxyPassReverse`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypassreverse)
+						</script>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				hash: true,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/highlight/highlight.js' },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
