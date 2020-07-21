@@ -38,6 +38,7 @@
 						* [Zugang einschränken](#auth)
 						* [URLs umleiten](#rewrites)
 						* [Apache als Reverse Proxy](#reverse-proxy)
+						* [Best Practices](#best-practices)
 					</section>
 				</section>
 
@@ -797,6 +798,133 @@
 							[`RewriteRule`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewriterule) und
 							[`ProxyPassReverse`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypassreverse)
 						</script>
+					</section>
+				</section>
+
+				<section id="best-practices">
+					<section data-markdown># Best Practices</section>
+					<section data-markdown>
+						## Standardkonfiguration prüfen
+
+						Die Standardkonfiguration hat bereits viele sinnvolle
+						Voreinstellungen, ist allerdings auch auf einen besonders einfachen
+						Start ausgelegt.
+
+						-> Sicherheit wird zugunsten von Komfort geopfert.
+
+						-> Standardkonfiguration sollte aufmerksam überprüft werden.
+
+					</section>
+					<section data-markdown>
+						## Nicht unnötig viele Informationen preisgeben
+
+						Details der verwendeten Software wie Name und genaue Version kann es
+						Angreifern einfacher machen, Sicherheitslücken zu finden.
+
+						-> Diese Informationen sollten auf ein sinnvolles Minimum reduziert sein:
+
+						* [`ServerTokens Minimal`](https://httpd.apache.org/docs/2.4/de/mod/core.html#servertokens)
+						* [`ServerSignature Off`](https://httpd.apache.org/docs/2.4/de/mod/core.html#serversignature)
+						* [`TraceEnable Off`](https://httpd.apache.org/docs/2.4/de/mod/core.html#traceenable)
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Zugriff auf Dateisystem einschränken
+
+							~~~apache
+							# keine Indexseiten für Ordnerinhalte generieren
+							Options -Indexes
+
+							# Zugriff auf *alle* Pfade erstmal sperren
+							# einzelne Pfade müssen dann erst *explizit* freigegeben werden
+							<Directory "/">
+								Require all denied
+							</Directory>
+							~~~
+
+							Zusätzlich Dateisystemberechtigungen so setzen, dass nur Dateien
+							gelesen/geändert werden können, die es auch sollen, siehe:
+							[`User`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#user) / [`Group`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#group)
+
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## Zugriff auf vertrauliche Daten verhindern
+
+							~~~apache
+							# Wird git zur Versionsverwaltung verwendet und ist der .git Ordner
+							# innerhalb des DocumentRoot erreichbar, kann man das komplette
+							# Repository per HTTP clonen
+							<DirectoryMatch "/\.git">
+								Require all denied
+							</DirectoryMatch>
+
+							# Konfigurationen wie Zugangsdaten werden oft in .env Dateien
+							# gespeichert. Diese sollten nicht direkt über HTTP abrufbar sein,
+							# sondern nur vom server-seitigen Code ausgelesen werden können.
+							<FilesMatch "^\.env">
+								Require all denied
+							</FilesMatch>
+							~~~
+
+							Siehe
+							[`DirectoryMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#directorymatch) und
+							[`FilesMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#filesmatch)
+
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							## `DocumentRoot` auf Web Assets beschränken
+
+							~~~apache
+							# /var/www/tool/
+							# |-- config/ (Konfigurationen)
+							# |-- src/ (Code)
+							# `-- webroot/
+							#    `-- css/ (Stylesheets)
+							#    `-- js/ (JavaScript)
+							#    `-- index.php (Einstiegspunkt)
+
+							DocumentRoot "/var/www/tool/webroot/"
+							<Directory /var/www/tool>
+								Require all denied
+							</Directory>
+							<Directory /var/www/tool/webroot>
+								Require all granted
+							</Directory>
+							~~~
+						</script>
+					</section>
+					<section data-markdown>
+						## HTTP/2 aktivieren
+
+						~~~apache
+						Protocols h2 http/1.1
+						~~~
+
+						[HTTP/2](https://httpd.apache.org/docs/2.4/howto/http2.html) ist
+						eine neuere Version von HTTP, die v.a. verbesserte Komprimierung und
+						Übertragungseffizienz bietet und von modernen Browsern bevorzugt wird.
+
+						HTTP/2 setzt allerdings eine verschlüsselte HTTPS-Verbindung voraus.
+
+						Außerdem muss ggf. [PHP auf das FastCGI Modul umgestellt werden](https://www.howtoforge.com/how-to-enable-http-2-in-apache/).
+					</section>
+					<section data-markdown>
+						## Fehlerseiten anpassen
+
+						~~~apache
+						# Beispiele aus /etc/apache2/conf-available/localized-error-pages.conf
+						ErrorDocument 500 "The server made a boo boo."
+						ErrorDocument 404 /missing.html
+						ErrorDocument 404 "/cgi-bin/missing_handler.pl"
+						ErrorDocument 402 http://www.example.com/subscription_info.html
+						~~~
+
+						Mit [`ErrorDocument`](https://httpd.apache.org/docs/2.4/de/mod/core.html#errordocument)
+						lassen sich die Fehlermeldungen/-texte anpassen.
 					</section>
 				</section>
 			</div>
