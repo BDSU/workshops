@@ -1,0 +1,548 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Grundlagen der Linux-Shell 2</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+
+		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+
+		<style>
+			.reveal {
+				color: #ccc;
+			}
+
+			.reveal strong {
+				color: #fff;
+			}
+
+			code {
+				background: #f8f8f829;
+				border-radius: 0.3rem;
+				padding: 0.05rem 0.2rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown>
+					# Grundlagen der Linux-Shell
+					## Teil II
+				</section>
+
+				<section>
+					<section data-markdown>## Grundlagen</section>
+					<section>
+						<h3>Shell-Prompt</h3>
+						<p>Ein typischer Bash-Prompt:</p>
+						<pre><code data-trim data-noescape class="shell">
+							<span
+								class="fragment zoom-in highlight-current-blue"
+								data-fragment-index="1"
+							>alice</span>@<span
+								class="fragment zoom-in highlight-current-blue"
+								data-fragment-index="2"
+							>localhost</span> <span
+								class="fragment zoom-in highlight-current-blue"
+								data-fragment-index="3"
+							>~/projects/workshops</span> <span
+								class="fragment zoom-in highlight-current-blue"
+								data-fragment-index="4"
+							>$</span>
+						</code></pre>
+						<ol>
+							<li class="fragment" data-fragment-index="1">Benutzername</li>
+							<li class="fragment" data-fragment-index="2">Hostname</li>
+							<li class="fragment" data-fragment-index="3">aktuelles Arbeitsverzeichnis</li>
+							<li class="fragment" data-fragment-index="4">Trenner: <em>#</em> für root-Benutzer, <em>$</em> sonst</li>
+						</ol>
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+							### Befehlseingabe
+
+							~~~
+							<Kommando> [<Argument1> [<Argument2> [...]]]
+							~~~
+
+							* Das erste Wort ist der auszuführende Befehl
+							* durch Leerzeichen getrennt werden Argumente angegeben, z.B.:
+								* Sub-Befehle
+								* (optionale) Flags/Parameter/Optionen
+								* Datei-/Verzeichnispfade
+							* Argumente, die Leerzeichen enthalten, können in
+							  Anführungszeichen (`""` / `''`) angegeben werden
+							* alles nach `#` bis zum Zeilenende ist ein Kommentar
+						</textarea>
+					</section>
+
+					<section data-markdown>
+						### Befehlseingabe - Beispiel
+
+						~~~console
+						$ echo "Hello World!"
+						Hello World
+
+						$ exit # Shell beenden
+						~~~
+
+						`$` in der ersten Zeile symbolisiert den Eingabeprompt.
+						Die zweite Zeile stellt die Kommandoausgabe dar.
+					</section>
+
+					<section data-markdown>
+						### Tastenkombinationen
+
+						* `Enter`: Befehl ausführen
+						* Pfeiltasten auf/ab: vorherige Befehle aufrufen
+						* Pfeiltaste links/rechts: Cursor in der Zeile bewegen
+						* `Strg` + Pfeiltaste links/rechts: Cursor ein Wort bewegen
+						* `C-c`*: aktuell laufendes Kommando abbrechen
+						* `Tab`: Autocomplete für aktuelle Eingabe
+						* `Tab` `Tab`: mögliche Vervollständigungen auflisten
+
+						*In Dokumentationen werden Tastenkombinationen wie `Strg+C` als
+						`Control-C`, `C-c` oder `^C` dargestellt.
+					</section>
+
+					<section data-markdown>
+						### Konventionen für Befehle
+
+						* sehr oft verwendete Kommandos sind meist sehr kurz:
+						  `cd`, `ls`, `cp`, `mv`
+						* Optionen in Langform werden mit zwei `--` angegeben:
+						  `ls --all`
+						* Optionen in Kurzform werden mit einem `-` und einem Zeichen angegeben:
+						  `ls -a`
+						* Kurzformen können mit einem `-` zusammengefasst werden:
+						  `ls -l -a` == `ls -la`
+						* Optionen können zusätzliche Parameter erfordern:
+						  `ls --color=auto`
+						* _keine Ausgabe_ bedeutet _Erfolg_
+					</section>
+
+					<section data-markdown>
+						### Hilfe bekommen
+
+						* mit `man` kann eine ausführliche Dokumentation zu einem
+						  Befehl angezeigt werden (die _**Man**unal Page_): `man ls`
+						* viele Kommandos zeigen mit `--help`/`-h` eine kurze Hilfe an:
+						  `ls --help`
+						* ebenfalls oft vorhanden: `--version`
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Dateisystempfade</section>
+					<section data-markdown>
+						### Pfadangaben
+
+						Dateisystempfade zu Verzeichnissen und Dateien können
+						unterschiedlich angegeben werden:
+
+						* Absolute/vollständige Pfade beginnend mit `/`
+						* ansonsten relativ zum aktuellen Arbeitsverzeichnis
+						* `.` im Pfad bezeichnet das aktuelle Verzeichnis
+						* `..` bezeichnet das übergeordnete Verzeichnis
+						* `~` bezeichnet das Home-Verzeichnis des aktuellen Benutzers
+						* Verzeichnisse/Dateien, die mit `.` beginnen, sind _versteckt_ und
+						  werden meistens ausgeblendet beim Auflisten/Anzeigen
+					</section>
+
+					<section data-markdown>
+						### Pfadangaben - Beispiele
+
+						Ist das aktuelle Verzeichnis `/home/alice/`, dann ist
+
+						| Angabe          | Pfad                   |
+						|-----------------|------------------------|
+						| `/home/bob/`    | `/home/bob/`           |
+						| `Desktop`       | `/home/alice/Desktop/` |
+						| `./Desktop`     | `/home/alice/Desktop/` |
+						| `../bob`        | `/home/bob/`           |
+						| `bin/../../bob` | `/home/bob/`           |
+						| `~/Desktop`     | `/home/alice/Desktop/` |
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+							### Wichtige Dateisystempfade
+
+							Wo welche Dateien liegen ist grob im
+							[_Filesystem Hierarchie Standard_](https://de.wikipedia.org/wiki/Filesystem_Hierarchy_Standard)
+							definiert, u.a.:
+
+							* `/home/<user>/`: Home-Verzeichnisse für persönliche Daten
+							* `/etc/`: Systemkonfiguration
+							* `/bin/`, `/usr/bin/`: Systembefehle/ausführbare Programme
+							* `/sbin/`, `/usr/sbin/`: Befehle für Administration
+							* `/tmp/`: temporäre Dateien
+							* `/var/log/`: Log-Dateien
+						</textarea>
+					</section>
+
+					<section data-markdown>
+						### Konventionen für Pfade und Dateiennamen
+
+						* Namen werden oft klein geschrieben - da leichter zu tippen
+						* Dateiendungen _können_ den Dateityp angeben - aus technischer
+						  Sicht aber völlig irrelevant
+							* `background.jpg` -> impliziert eine Bilddatei,
+							  _kann_ aber auch Text sein
+						* persönliche Konfigurationen werden in versteckten
+						  Dateien/Verzeichnissen im Home-Verzeichnis abgelegt
+						  (z.B. `~/.ssh/`, `~/.bashrc`)
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## wichtige Befehle zum Navigieren und Arbeiten mit Dateien</section>
+
+					<section data-markdown>
+						### aktuelles Arbeitsverzeichnis ausgeben
+						`pwd`: _**P**rint **W**orking **D**irectory_
+
+						~~~console
+						$ pwd
+						/home/alice
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Arbeitsverzeichnis wechseln
+						`cd`: _**C**hange **D**irectory_
+
+						~~~console
+						$ cd /tmp/ # Wechseln zu /tmp
+						$ cd ~ # in Home-Verzeichnis wechseln
+						$ cd Desktop # in `Desktop` im aktuellen Verzeichnis wechseln
+						$ cd .. # eine Ebene nach oben gehen
+
+						$ cd - # zurück in vorheriges Verzeichnis wechseln
+						/home/alice/Desktop
+
+						$ cd # in Home-Verzeichnis wechseln
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Verzeichnisinhalte auflisten
+						`ls`: **l**i**s**t directory contents
+
+						~~~console
+						$ ls
+						Desktop  bin  listing.txt
+
+						## mehr Details anzeigen
+						$ ls -l
+						total 4
+						drwxr-xr-x 1 alice alice 30 Sep 29 16:54 Desktop
+						drwxr-xr-x 1 alice alice  6 Sep 29 16:54 bin
+						-rw-r--r-- 1 alice alice 24 Sep 29 16:53 listing.txt
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Verzeichnis erstellen
+						`mkdir`: _**m**a**k**e **dir**ectory_
+
+						~~~console
+						$ mkdir /tmp/foo # Verzeichnis `/tmp/foo/` erstellen
+						$ mkdir foo # Verzeichnis `foo` im aktuellen Verzeichnis erstellen
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Dateien erstellen
+						`touch`: Zeitstempel von Dateien ändern
+
+						~~~console
+						## `touch` aktualisiert den Zeitstempel der letzten Bearbeitung
+						## existiert die angegebene Datei noch nicht
+						## wird eine neue leere Datei erstellt
+						$ touch file1.txt
+						$ ls -l file1.txt
+						-rw-r--r-- 1 alice alice 0 Sep 29 17:39 file1.txt
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Dateien kopieren
+						`cp`: _**c**o**p**y_
+
+						~~~console
+						## Kopie von `file1.txt` mit Namen `file2.txt` erstellen
+						$ cp file1.txt file2.txt
+
+						## `file1.txt` und `file2.txt` in `./Desktop/` kopieren
+						$ cp file1.txt file2.txt Desktop/
+
+						## Kopie des Verzeichnisses `Desktop` ertellen
+						$ cp -a Desktop/ Desktop_backup
+						~~~
+
+						* `-a`/`--archive` == `-dR --preserve=all`
+						* `-d`: [symbolische Links](https://de.wikipedia.org/wiki/Symbolische_Verkn%C3%BCpfung) mitkopieren
+						* `-R`: Inhalte _**r**ekursiv_ kopieren
+						* `--preserve=all`: Dateiattribute mitkopieren (Besitzer, Berechtigungen)
+					</section>
+
+					<section data-markdown>
+						### Dateien verschieben/umbenennen
+						`mv`: _**m**o**v**e_
+
+						~~~console
+						## `file1.txt` zu `file2.txt` umbenennen
+						$ mv file1.txt file2.txt
+
+						## `file2.txt` in Verzeichnis `Desktop/` verschieben
+						$ mv file2.txt Desktop/
+
+						## `file2.txt` verschieben *und* umbenennen
+						$ mv Desktop/file2.txt /tmp/file3.txt
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Dateien löschen
+						`rm`: _**r**e**m**ove_
+
+						~~~console
+						## einzelne Dateien löschen
+						$ rm file1.txt file2.txt Desktop/file2.txt
+
+						## Verzeichnis `/tmp/sandbox/` rekursiv löschen
+						$ rm -rf /tmp/sandbox/
+						~~~
+
+						* `-r`: Verzeichnisse _**r**ekursiv_ löschen
+						* `-f`/`--force`: Inhalte ohne Rückfragen löschen
+					</section>
+
+					<section data-markdown>
+						### Dateiinhalte ausgeben
+						`cat`: _con**cat**enate files_
+
+						~~~console
+						## gibt den Inhalt der angebenen Datei(en) zusammen aus
+						$ cat /etc/issue
+						Debian GNU/Linux 10 \n \l
+
+						$ cat /etc/hostname
+						demo
+
+						$ cat /etc/issue /etc/hostname
+						Debian GNU/Linux 10 \n \l
+
+						demo
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Dateiinhalte anzeigen
+						`more`: Inhalte seitenweise anzeigen
+
+						~~~console
+						$ more /etc/bash.bashrc
+						## mit Leertaste jeweils eine Seite weiterblättern
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Dateiinhalte interaktiv anzeigen
+						`less`: _Gegenteil von `more`_
+
+						~~~console
+						$ less /etc/bash.bashrc
+						## mit Leertaste jeweils eine Seite weiterblättern
+						## vor/zurück scrollen mit Pfeiltasten
+						## beenden mit `q` (quit)
+						~~~
+					</section>
+
+				</section>
+
+				<section>
+					<section data-markdown>## Ausgabeumleitung und Pipes</section>
+					<section data-markdown>
+						### Ausgabe in Datei umleiten/speichern
+
+						~~~console
+						## Ausgabe von `echo` in Datei `hello.txt` umleiten
+						## existiert die Datei nicht, wird sie erstellt
+						$ echo "Hello World!" > hello.txt
+						$ cat hello.txt
+						Hello World!
+
+						## Inhalt von `hello.txt` mit `echo` überschreiben
+						$ echo "Hello Sea!" > hello.txt
+						$ cat hello.txt
+						Hello Sea!
+
+						## Ausgabe an `hello.txt` anhängen
+						$ echo "Hello World!" >> hello.txt
+						$ cat hello.txt
+						Hello Sea!
+						Hello World!
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Datei als Eingabe verwenden
+
+						~~~console
+						## ohne Argumente gibt `cat` die Eingabe unverändert aus
+						$ cat < hello.txt
+						Hello Sea!
+						Hello World!
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Pipes
+
+						* **[Unix-Philosophie](https://de.wikipedia.org/wiki/Unix-Philosophie)**:
+							_Mache nur eine Sache und mache sie gut_
+							* die volle Mächtigkeit der Unix-Tools entfaltet sich durch _Komposition_
+
+						~~~console
+						## anstatt die Ausgabe in einer Datei zwischenzuspeichern...
+						$ echo "Hello World!" > hello.txt
+						$ cat < hello.txt
+						Hello World!
+
+						## ... kann sie mit einer Pipe (`|`) direkt
+						## an ein anderes Kommando weitergegeben werden
+						$ echo "Hello World!" | cat
+						Hello World!
+						~~~
+					</section>
+
+					<section data-markdown>
+						### Pipes - Beispiele
+
+						~~~console
+						$ echo "Hello World!" > hello.txt
+						$ echo "Hello Sea!" >> hello.txt
+						$ cat hello.txt
+						Hello World!
+						Hello Sea!
+
+						## `tac` ist wie `cat` in umgekehrter Zeilenreihenfolge
+						$ cat hello.txt | tac
+						Hello Sea!
+						Hello World!
+
+						## `rev` gibt Zeilen rückwärts aus
+						$ cat hello.txt | rev
+						!dlroW olleH
+						!aeS olleH
+
+						## `tac` und `rev` kombiniert
+						$ cat hello.txt | tac | rev
+						!aeS olleH
+						!dlroW olleH
+
+						## `sort` sortiert Zeilen alphabetisch
+						$ cat hello.txt | sort
+						Hello Sea!
+						Hello World!
+
+						## `grep` filtert Zeilen nach Suchwörtern
+						$ cat hello.txt | grep World
+						Hello World!
+						$ cat hello.txt | grep Sea
+						Hello Sea!
+
+						## `wc` zählt die Zeilen/Wörter/Zeichen der Eingabe
+						$ cat hello.txt | wc
+						      2       4      24
+
+						## `cowsay` formatiert die Eingabe in ASCII Art
+						$ echo "Hello World!" | cowsay
+						 ______________
+						< Hello World! >
+						 --------------
+						        \   ^__^
+						         \  (oo)\_______
+						            (__)\       )\/\
+						                ||----w |
+						                ||     ||
+						~~~
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Fortgeschrittene Themen</section>
+					<section data-markdown>
+						### Konfiguration der Shell
+
+						* Mehr Produktivität mit eigenen Aliassen und Shortcuts
+						* Verhalten der Shell mit Konfigurationsdateien anpassen
+						* Verbessertes Autocomplete
+						* Individueller Eingabeprompt
+					</section>
+					<section data-markdown>
+						### Tastenkombinationen für Power-User
+
+						Mehr nützliche unbekannte Tastenkombinationen
+					</section>
+					<section data-markdown>
+						### Shell Scripting
+
+						* Erstellen eigener Shell-Skripte
+						* Kontrollstrukturen (`if`, Loops)
+						* Verarbeiten von Kommandozeilenargumenten
+						* Debugging von Shell-Skripten
+						* Signal Handling
+					</section>
+					<section data-markdown>
+						### Wichtige Unix-Tools im Detail
+
+						Übersicht wichtiger Kommandozeilentools und deren Verwendung
+					</section>
+					<section data-markdown>
+						### Fortgeschrittene Pipes
+
+						Komplexere Kontruktionen mit mehreren Pipes
+					</section>
+					<section data-markdown>
+						### Variablen
+
+						* Verwendung von Variablen
+						* Interpolation und Bearbeiten von Variableninhalten
+						* Einlesen von Ausgaben in Variablen
+						* wichtige (Umgebungs-)Variablen und deren Verwendung
+					</section>
+					<section data-markdown>
+						### Praxisübungen
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
