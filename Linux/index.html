@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Grundlagen der Linux-Shell 2</title>
+		<title>Grundlagen der Linux-Shell</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
@@ -34,7 +34,6 @@
 			<div class="slides">
 				<section data-markdown>
 					# Grundlagen der Linux-Shell
-					## Teil II
 				</section>
 
 				<section>
@@ -49,10 +48,10 @@
 							>alice</span>@<span
 								class="fragment zoom-in highlight-current-blue"
 								data-fragment-index="2"
-							>localhost</span> <span
+							>localhost</span>:<span
 								class="fragment zoom-in highlight-current-blue"
 								data-fragment-index="3"
-							>~/projects/workshops</span> <span
+							>~/projects/workshops</span><span
 								class="fragment zoom-in highlight-current-blue"
 								data-fragment-index="4"
 							>$</span>
@@ -64,7 +63,6 @@
 							<li class="fragment" data-fragment-index="4">Trenner: <em>#</em> für root-Benutzer, <em>$</em> sonst</li>
 						</ol>
 					</section>
-
 					<section data-markdown>
 						<textarea data-template>
 							### Befehlseingabe
@@ -83,7 +81,6 @@
 							* alles nach `#` bis zum Zeilenende ist ein Kommentar
 						</textarea>
 					</section>
-
 					<section data-markdown>
 						### Befehlseingabe - Beispiel
 
@@ -97,7 +94,6 @@
 						`$` in der ersten Zeile symbolisiert den Eingabeprompt.
 						Die zweite Zeile stellt die Kommandoausgabe dar.
 					</section>
-
 					<section data-markdown>
 						### Tastenkombinationen
 
@@ -112,7 +108,6 @@
 						*In Dokumentationen werden Tastenkombinationen wie `Strg+C` als
 						`Control-C`, `C-c` oder `^C` dargestellt.
 					</section>
-
 					<section data-markdown>
 						### Konventionen für Befehle
 
@@ -128,12 +123,13 @@
 						  `ls --color=auto`
 						* _keine Ausgabe_ bedeutet _Erfolg_
 					</section>
-
 					<section data-markdown>
 						### Hilfe bekommen
 
 						* mit `man` kann eine ausführliche Dokumentation zu einem
 						  Befehl angezeigt werden (die _**Man**unal Page_): `man ls`
+						* Kommandos, die Teil der Shell sind, geben mit `help` Hilfe
+						  z.B. `help echo`
 						* viele Kommandos zeigen mit `--help`/`-h` eine kurze Hilfe an:
 						  `ls --help`
 						* ebenfalls oft vorhanden: `--version`
@@ -156,7 +152,6 @@
 						* Verzeichnisse/Dateien, die mit `.` beginnen, sind _versteckt_ und
 						  werden meistens ausgeblendet beim Auflisten/Anzeigen
 					</section>
-
 					<section data-markdown>
 						### Pfadangaben - Beispiele
 
@@ -171,7 +166,6 @@
 						| `bin/../../bob` | `/home/bob/`           |
 						| `~/Desktop`     | `/home/alice/Desktop/` |
 					</section>
-
 					<section data-markdown>
 						<textarea data-template>
 							### Wichtige Dateisystempfade
@@ -188,7 +182,6 @@
 							* `/var/log/`: Log-Dateien
 						</textarea>
 					</section>
-
 					<section data-markdown>
 						### Konventionen für Pfade und Dateiennamen
 
@@ -205,7 +198,6 @@
 
 				<section>
 					<section data-markdown>## wichtige Befehle zum Navigieren und Arbeiten mit Dateien</section>
-
 					<section data-markdown>
 						### aktuelles Arbeitsverzeichnis ausgeben
 						`pwd`: _**P**rint **W**orking **D**irectory_
@@ -215,7 +207,6 @@
 						/home/alice
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Arbeitsverzeichnis wechseln
 						`cd`: _**C**hange **D**irectory_
@@ -232,7 +223,6 @@
 						$ cd # in Home-Verzeichnis wechseln
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Verzeichnisinhalte auflisten
 						`ls`: **l**i**s**t directory contents
@@ -249,7 +239,6 @@
 						-rw-r--r-- 1 alice alice 24 Sep 29 16:53 listing.txt
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Verzeichnis erstellen
 						`mkdir`: _**m**a**k**e **dir**ectory_
@@ -259,7 +248,6 @@
 						$ mkdir foo # Verzeichnis `foo` im aktuellen Verzeichnis erstellen
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Dateien erstellen
 						`touch`: Zeitstempel von Dateien ändern
@@ -273,7 +261,6 @@
 						-rw-r--r-- 1 alice alice 0 Sep 29 17:39 file1.txt
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Dateien kopieren
 						`cp`: _**c**o**p**y_
@@ -294,7 +281,6 @@
 						* `-R`: Inhalte _**r**ekursiv_ kopieren
 						* `--preserve=all`: Dateiattribute mitkopieren (Besitzer, Berechtigungen)
 					</section>
-
 					<section data-markdown>
 						### Dateien verschieben/umbenennen
 						`mv`: _**m**o**v**e_
@@ -310,7 +296,6 @@
 						$ mv Desktop/file2.txt /tmp/file3.txt
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Dateien löschen
 						`rm`: _**r**e**m**ove_
@@ -326,7 +311,6 @@
 						* `-r`: Verzeichnisse _**r**ekursiv_ löschen
 						* `-f`/`--force`: Inhalte ohne Rückfragen löschen
 					</section>
-
 					<section data-markdown>
 						### Dateiinhalte ausgeben
 						`cat`: _con**cat**enate files_
@@ -345,7 +329,6 @@
 						demo
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Dateiinhalte anzeigen
 						`more`: Inhalte seitenweise anzeigen
@@ -355,7 +338,6 @@
 						## mit Leertaste jeweils eine Seite weiterblättern
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Dateiinhalte interaktiv anzeigen
 						`less`: _Gegenteil von `more`_
@@ -367,7 +349,6 @@
 						## beenden mit `q` (quit)
 						~~~
 					</section>
-
 				</section>
 
 				<section>
@@ -394,7 +375,6 @@
 						Hello World!
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Datei als Eingabe verwenden
 
@@ -405,7 +385,6 @@
 						Hello World!
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Pipes
 
@@ -425,7 +404,6 @@
 						Hello World!
 						~~~
 					</section>
-
 					<section data-markdown>
 						### Pipes - Beispiele
 
@@ -480,52 +458,1395 @@
 					</section>
 				</section>
 
+				<section data-markdown>## Fortgeschrittene Themen</section>
+
 				<section>
-					<section data-markdown>## Fortgeschrittene Themen</section>
+					<section data-markdown>## Tastenkombinationen für Power-User</section>
 					<section data-markdown>
-						### Konfiguration der Shell
+						### Anmerkungen
 
-						* Mehr Produktivität mit eigenen Aliassen und Shortcuts
-						* Verhalten der Shell mit Konfigurationsdateien anpassen
-						* Verbessertes Autocomplete
-						* Individueller Eingabeprompt
+						* In Dokumentationen werden Tastenkombinationen wie `Strg+C` als
+						  `Control-C`, `C-c` oder `^C` dargestellt
+						* `M-c` bedeutet `Meta+C`, wobei `Meta` die linke `Alt`-Taste ist
+						  (bzw. `Option` bei MacOS)
+						* alternativ kann `M-c` auch als `Esc C` eingegeben werden
+						* die Funktionsfähigkeit der Tastenkombinationen kann auch
+						  vom verwendeten Terminal abhängen
 					</section>
 					<section data-markdown>
-						### Tastenkombinationen für Power-User
+						<script type="text/template">
+							### Autovervollständigung
 
-						Mehr nützliche unbekannte Tastenkombinationen
+							* `Tab`: Eingabe soweit möglich vervollständigen
+							* `Tab` `Tab`: mögliche Vervollständigungen _anzeigen_
+
+							---
+
+							Die Autovervollständigung mit `Tab` ist mit die wichtigste
+							Angewohnheit, um auf der Shell effizient zu arbeiten!
+							<!-- .element: class="fragment grow" -->
+						</script>
 					</section>
 					<section data-markdown>
-						### Shell Scripting
+						### laufende Kommandos steuern
 
-						* Erstellen eigener Shell-Skripte
-						* Kontrollstrukturen (`if`, Loops)
-						* Verarbeiten von Kommandozeilenargumenten
-						* Debugging von Shell-Skripten
-						* Signal Handling
+						* `C-c`: aktuellen Befehl abbrechen / `SIGINT` senden
+						* `C-z`: aktuellen [_Job_](#suspend-job) pausieren
 					</section>
 					<section data-markdown>
-						### Wichtige Unix-Tools im Detail
+						### nützliche Tastenkombinationen
 
-						Übersicht wichtiger Kommandozeilentools und deren Verwendung
+						* `C-l`: _c**l**ear screen_ - Seiteninhalt leeren
+						* `C-d`: _interaktive_ Eingabe beenden / _end-of-file_ senden
+						  (z.B. mit `cat`)
+						* `C-x C-e`: `$EDITOR` starten, um Befehl zu bearbeiten
+						  und Ergebnis auszuführen
+						* `M-#`: aktuelle Eingabe als Kommentar ausführen
 					</section>
 					<section data-markdown>
-						### Fortgeschrittene Pipes
+						### Cursor bewegen
 
-						Komplexere Kontruktionen mit mehreren Pipes
+						* `C-a`: an den **A**nfang der Eingabe springen
+						* `C-e`: an das **E**nde der Eingabe springen
+						* `C-f`: ein Zeichen weiter (_**f**orwards_, Pfeil rechts)
+						* `C-b`: ein Zeichen zurück (_**b**ackwards_, Pfeil links)
+						* `M-f`: ein _Wort_ weiter (`Strg` + Pfeil rechts)
+						* `M-b`: ein _Wort_ zurück (`Strg` + Pfeil links)
 					</section>
 					<section data-markdown>
-						### Variablen
+						### Eingaben löschen
 
-						* Verwendung von Variablen
-						* Interpolation und Bearbeiten von Variableninhalten
-						* Einlesen von Ausgaben in Variablen
-						* wichtige (Umgebungs-)Variablen und deren Verwendung
+						* `C-w`: **W**ort vor Cursor löschen
+						* `M-d`: Wort nach Cursor löschen
+						* `C-k`: alles _nach_ Cursor löschen (_**k**ill_)
+						* `C-u`: alles _vor_ dem Cursor löschen
+						* `C-y`: zuletzt Gelöschtes einfügen (_**y**ank_)
 					</section>
 					<section data-markdown>
-						### Praxisübungen
+						### Eingabe bearbeiten
+
+						* `C-_`, `C-x C-u`: Änderungen rückgängig machen
+						* `C-v`: nächste Tasteneingabe unverändert übernehmen (z.B. `C-v Tab`)
+						* `M-r`: alle Änderungen der Zeile **r**ückgängig machen
+						* `C-t`: letzte beiden _Zeichen_ der Eingabe **t**auschen
+						* `M-t`: letzte beiden _Wörter_ der Eingabe **t**auschen
+						* `M-u`: bis Wortende in _**U**ppercase_ umwandeln
+						* `M-l`: bis Wortende in _**L**owercase_ umwandeln
+						* `M-c`: folgendes Wort kapitalisieren
+					</section>
+					<section data-markdown>
+						### durch die History navigieren
+
+						* `C-r`: History rückwärts durchsuchen
+						* `C-j`, `Esc`: Suche beenden und Ergebnis bearbeiten
+						* `C-g`: Suche abbrechen und Eingabe zurücksetzen
+						* `C-o`: Eingabe ausführen und nächste Zeile aus History bearbeiten
+						* `C-p`: zur vorherigen Eingabe (Pfeil rauf)
+						* `C-n`: zur nächsten Eingabe (Pfeil runter)
+						* `M-<`: zum Anfang der History springen
+						* `M->`: ans Ende der History springen
+						* `M-.`, `M-_`: letztes Argument des letzten Befehls einfügen
 					</section>
 				</section>
+
+				<section>
+					<section data-markdown>## Variablen</section>
+					<section data-markdown>
+						### einfache Variablen
+
+						~~~console
+						## Deklaration und Zuweisung von Variablen mit `=`
+						## Beachte: keine Leerzeichen vor/nach `=` !
+						$ var="Hello World"
+
+						## Zugriff auf Variablen mit `$`
+						$ echo $var
+						Hello World
+
+						## Variable $var wieder löschen
+						$ unset var
+						$ echo $var
+
+						## leere Ausgabe
+						~~~
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							### Quoting von Variablen
+
+							~~~console
+							$ touch "Hello World.txt" # Datei "Hello World.txt" anlegen
+							$ file="Hello World.txt"
+
+							## Variablen in `""` werden ersetzt und das Ergebnis
+							##  als *ein* String an das Kommando übergeben:
+							$ ls -l "$file"
+							-rw-r--r-- 1 alice alice 0 Oct  2 13:52 'Hello World.txt'
+
+							## ohne Anführungszeichen wird der Variableninhalt
+							## einfach in der Kommandozeile eingefügt:
+							$ ls -l $file
+							ls: cannot access 'Hello': No such file or directory
+							ls: cannot access 'World.txt': No such file or directory
+							## durch das Leerzeichen wird `ls` der Inhalt als
+							## zwei getrennte Dateinamen übergeben!
+
+							## Variablen in `''` werden nicht ersetzt
+							$ ls -l '$file'
+							ls: cannot access '$file': No such file or directory
+
+							## Mit `\` kann man `$` escapen
+							$ ls -l "\$file"
+							ls: cannot access '$file': No such file or directory
+							~~~
+
+							Falsches Quoting ist eine häufige Fehlerquelle,
+							wenn Variablen unerwartete Zeichen enthalten können (z.B. Leerzeichen)
+							<!-- .element class="fragment" -->
+						</script>
+					</section>
+					<section data-markdown>
+						### Quoting von Variablen
+
+						~~~console
+						## in Strings kann auch weiterer Text enthalten sein
+						$ name=Alice
+						$ echo "Hello $name!"
+						Hello Alice!
+
+						## mit `{}` können Variablen besser abgegrenzt werden
+						$ echo "Hello ${name}!"
+						Hello Alice!
+						~~~
+					</section>
+					<section data-markdown>
+						### Parameter Expansion
+
+						~~~sh
+						# wenn "$var" leer oder nicht gesetzt ist,
+						# wird "missing" ausgegeben, sonst "$var"
+						echo ${var:-missing} # "missing"
+
+						var="Hello World"
+						# nur ab einem bestimmten Offset (6) und mit Länge (5)
+						echo ${var:6}   # "World"
+						echo ${var:0:5} # "Hello"
+
+						# Zeichenlänge der Variable
+						echo ${#var} # "11"
+
+						# Pattern Matching am Anfang entfernen
+						echo "${var#Hello}"  # " World"
+						echo "${var#World}"  # "Hello World"
+						echo "${var#Hel*o}"  # " World" (kürzester Match)
+						echo "${var##Hel*o}" # "rld"     (längster Match)
+
+						# Pattern Matching am Ende entfernen
+						echo "${var%Hello}"  # "Hello World"
+						echo "${var%World}"  # "Hello "
+						echo "${var%o*}"     # "Hello W" (kürzester Match)
+						echo "${var%%o*}"    # "Hell"     (längster Match)
+
+						# Pattern ersetzen
+						echo "${var/o/O}"  # "HellO World"
+						echo "${var//o/O}" # "HellO WOrld" (alle Vorkommen ersetzen)
+						echo "${var/Hel*o/HELLO}"  # "HELLOrld" (längster Match)
+						~~~
+
+						Genauere Beschreibungen und _weitere_ Operatoren sind zu finden in
+						der [`bash` man page](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion)
+					</section>
+					<section data-markdown>
+						### Command Substitution
+
+						~~~console
+						## die Ausagbe eines Kommandos kann als Inhalt auf der
+						## Kommandozeile eingesetzt werden
+						$ name=`echo Alice`  # Command Substitution mit ``
+						$ name=$(echo Alice) # alternative Schreibweise
+						$ echo $name
+						Alice
+
+						$ echo `date`
+						Fri Oct 2 15:09:05 UTC 2020
+						~~~
+					</section>
+					<section data-markdown>
+						### Umgebungsvariablen
+
+						~~~console
+						$ echo $HOME # vom OS gesetzte Umgebungsvariable
+						/home/alice
+
+						## $name zu Umgebungsvariable machen
+						$ export name
+						$ export name=Alice # Wert direkt mit definieren
+
+						## Umgebungsvariable für einzelnes Kommando setzen/ändern
+						$ LANG=de_DE man ls # man page auf Deutsch anzeigen
+						$ LANG=en_US man ls # man page auf Englisch anzeigen
+
+						$ env # alle gesetzten Umgebungsvariablen ausgeben
+						~~~
+
+						_Umgebungsvariablen_ (Environment variables) vom OS an gestartete
+						Programme vererbt und können das Verhalten von Programmen zu
+						beeinflussen.
+
+						Sie werden meist in Großbuchstaben benannt.
+					</section>
+					<section data-markdown>
+						### einige wichtige Umgebungsvariablen
+
+						* `HOME`: Home-Verzeichnis des Benutzers (siehe `~`)
+						* `HOSTNAME`: Hostname des Rechners
+						* `PWD`: aktuelles Arbeitsverzeichnis
+						* `OLDPWD`: verheriges Arbeitsverzeichnis
+						* `LANG`: bevorzugte Systemsprache
+						* `EDITOR`: absoluter Pfad zum bevorzugten Texteditor
+						  (`vim`, `nano`, `emacs`, ...)
+					</section>
+					<section data-markdown>
+						### [`$PATH`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-PATH)
+
+						Gibt durch `:` getrennt an, in welchen Verzeichnissen ausführbare
+						Programme/Skripte gesucht werden sollen, wenn einfache Befehle
+						angegeben werden.
+
+						~~~console
+						$ echo $PATH
+						/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+						## ausführbares Skript ~/bin/myscript erstellen
+						$ mkdir ~/bin
+						$ $EDITOR ~/bin/myscript
+						$ chmod +x ~/bin/myscript
+
+						$ myscript
+						bash: myscript: command not found
+						$ PATH=$PATH:~/bin # ~/bin/ zu $PATH hinzufügen
+						$ myscript # `myscript` wird erfolgreich ausgeführt
+						$ which myscript
+						/home/alice/bin/myscript
+						~~~
+					</section>
+					<section data-markdown>
+						### [`$CDPATH`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-CDPATH)
+
+						Gibt Suchpfade für `cd` an, sodass man schneller zu oft verwendeten
+						Verzeichnissen wechseln kann.
+
+						~~~console
+						$ mkdir -p projects/workshops projects/admin-scripts
+						$ cd workshops
+						bash: cd: workshops: No such file or directory
+
+						$ CDPATH=~:~/projects
+
+						$ cd workshops
+						/home/alice/projects/workshops
+
+						$ cd admin-scripts
+						/home/alice/projects/admin-scripts
+
+						$ cd projects
+						/home/alice/projects
+						~~~
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Komposition von Kommandos</section>
+					<section data-markdown>
+						### einfache Verkettung mehrerer Befehle
+
+						~~~console
+						## Kommandos können mit `;` verkettet werden:
+						$ echo Hello; echo World
+						Hello
+						World
+
+						$ mkdir test; cd test; echo "Hello World!" > hello.txt
+						$ pwd
+						/home/alice/test
+						$ ls
+						hello.txt
+						$ cat hello.txt
+						Hello World!
+						~~~
+					</section>
+					<section data-markdown>
+						### Hintergrundwissen: Exit Status von Programmen
+
+						* Programme geben mit ihrem Exit Status den Erfolg
+						  ihrer Ausführung an
+						* entspricht dem Return-Wert der `main`-Funktion
+						  (u.a. in `C`-Programmen)
+						* Integerwert: `0` bedeutet Erfolg, alles andere
+						  Fehler/Misserfolg o.ä.
+
+						~~~console
+						## Exit Status des letzten Kommandos ist in `$?` gespeichert
+						$ true; echo $?
+						0
+						$ false; echo $?
+						1
+						~~~
+					</section>
+					<section data-markdown>
+						### bedingte Verkettung
+
+						~~~console
+						## `&&` führt das folgende Kommando nur bei Erfolg des
+						## vorherigen Kommandos aus
+						$ ls hello.txt && echo "hello.txt existiert"
+						hello.txt
+						hello.txt existiert
+
+						## `||` führt das folgende Kommando nur bei Misserfolg des
+						## vorherigen Kommandos aus
+						$ ls goodbye.txt || echo "goodbye.txt existiert nicht"
+						ls: cannot access 'goodbye.txt': No such file or directory
+						goodbye.txt existiert nicht
+						~~~
+					</section>
+					<section data-markdown>
+						### Kommandos gruppieren
+
+						~~~console
+						### Kommandos als Gruppe ausführen:
+						## - Umleitungen von Input/Output gelten für ganze Gruppe
+						## - Gesamt-Exit-Status ist das des letzten Kommandos
+
+						## Als Block:
+						## Leerzeichen vor/nach sowie letztes `;` sind Pflicht
+						$ { echo Hello; echo World; } > hello.txt
+						$ cat hello.txt
+						Hello
+						World
+
+						## in einer Subshell:
+						## Kommandos werden in eigener Subshell ausgeführt
+						## -> geänderte Variablen beeinflussen nicht Haupt-Shell
+						$ (HELLO="Hello"; echo $HELLO; echo World)
+						Hello
+						World
+						$ echo $HELLO # leer
+						~~~
+
+						Siehe auch [Doku](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Command-Grouping)
+					</section>
+				</section>
+
+
+				<section>
+					<section data-markdown>## Fortgeschrittene Pipes</section>
+					<section data-markdown>
+						### Beobachtungen mit Pipes
+
+						~~~console
+						$ cat foobar > output.txt
+						cat: foobar: No such file or directory
+						## -> Fehlermeldung wird nicht in Datei umgeleitet
+
+						$ cat foobar | rev
+						cat: foobar: No such file or directory
+						## -> Fehlermeldung wird nicht durch `rev` verarbeitet
+						~~~
+
+						Anscheinend werden nicht _alle_ Ausgaben eines Programms mit Pipes
+						umgeleitet.
+					</section>
+					<section data-markdown>
+						### Hintergrund: Ein-/Ausgabe und File Descriptoren
+
+						* Von einem Prozess geöffnete "Dateien" werden vom
+						  Betriebssystem intern in einer Tabelle gespeichert
+						* Zugriff geschieht über _File Descriptor_:
+						  Nummer der Datei in Tabelle
+						* geöffnete "Dateien" können dabei z.B. sein:
+							* normale Dateien
+							* Pipes von/zu anderen Prozessen
+							* physische Geräte (z.B. `/dev/sda`)
+							* Netzwerkverbindungen
+					</section>
+					<section data-markdown>
+						### Hintergrund: Standard Ein-/Ausgabe
+
+						Per Konvention/de facto Standard hat jeder Prozess beim Start diese
+						_File Descriptoren_ geöffnet:
+
+						* `0`: Standard Eingabe / _stdin_
+						* `1`: Standrard Ausgabe / _stdout_
+						* `2`: Standard Fehlerausgabe / _stderr_
+
+						Diese sind normalerweise mit dem Terminal verknüpft:
+						Eingabe über Tastatur, Ausgabe wird auf dem Bildschirm dargestellt.
+					</section>
+					<section data-markdown>
+						### Hintergrund: Syntax von Pipes
+
+						Ohne weitere Angaben leiten die Pipes mit
+						* `<`: Inhalt der Datei mit _stdin_ des Kommandos verknüpfen
+						* `>`: _stdout_ in angegebene Datei schreiben
+						* `>>`: wie `>` aber Ausgabe an Datei anfügen
+						* `|`: _stdout_ des ersten Kommandos mit _stdin_ des zweiten verbinden
+					</section>
+					<section data-markdown>
+						### Pipes mit File Descriptoren
+
+						~~~console
+						## Ausgabe auf stderr (2) in Datei umleiten
+						$ cat foobar 2> output.txt
+						$ cat output.txt
+						cat: foobar: No such file or directory
+
+						## Ausgabe auf stderr und stdout in selbe Datei umleiten:
+						## "stdout in 'output.txt', stderr wie stdout"
+						$ cat foobar > output.txt 2>&1
+						## "stdout und stderr in 'output.txt'"
+						$ cat foobar &> output.txt
+
+						## Ausgabe auf stderr in die Pipe von stdout umleiten
+						$ cat foobar 2>&1 | rev
+						yrotcerid ro elif hcus oN :raboof :tac
+
+						## Vorsicht:
+						## "stderr in die Pipe von stdout, *dann* stdout in Datei"
+						$ cat foobar 2>&1 > output.txt
+						cat: foobar: No such file or directory
+						$ cat foobar 2>&1 > output.txt | rev
+						yrotcerid ro elif hcus oN :raboof :tac
+						~~~
+					</section>
+					<section data-markdown>
+						### Tipps und Konventionen
+
+						~~~console
+						## nach `/dev/null` geleitete Ausgaben werden verworfen
+						## wird oft verwendet, um Fehlermeldungen zu ignorieren:
+						$ cat foobar 2> /dev/null # Ausgaben auf stderr verwerfen
+						$ echo foobar > /dev/null # Ausgabe (stdout) verwerfen
+
+						## bei vielen Tools kann als Datei '-' angegeben werden,
+						## um stdin bzw. stdout zu verwenden:
+						$ echo Hello > hello.txt
+						$ echo World | cat hello.txt -
+						Hello
+						World
+						## `cat` liest den Inhalt von `hello.txt`
+						## und von der "Datei" stdin ('-')
+						~~~
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							### _Here Documents_
+
+							~~~console
+							## größere Textblöcke können mit Here Documents als
+							## Input für stdin angegeben werden:
+							$ rev <<EOT
+							> Hello
+							> World
+							> EOT
+							olleH
+							dlroW
+
+							## `<<EOT` gibt an, dass alle folgenden Zeilen als stdin für
+							## `rev` gelesen werden sollen, bis eine Zeile nur aus 'EOT'
+							## besteht (das Wort 'EOT' ist frei gewählt)
+
+							## mit `<<-` werden führende Tabs/Leerzeichen ignoriert
+							## dies ist für die Formatierung von Skripten nützlich
+							$ rev <<-EOT
+							>     Hello
+							>     World
+							olleH
+							dlroW
+							~~~
+
+							Für mehr Details siehe
+							[Doku](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Here-Documents).
+						</script>
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							### _Here Strings_
+
+							~~~console
+							## kompakte Form von Here Documents:
+							## angegebenes Wort wird direkt als stdin verwendet
+							$ cat <<< foobar
+							foobar
+
+							$ cat <<< "Hello World!"
+							Hello World!
+
+							## es können auch Variablen verwendet werden
+							$ TEXT="Hello World!"
+							$ cat <<< $TEXT
+							Hello World!
+							~~~
+
+							Für mehr Details siehe
+							[Doku](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Here-Strings).
+						</script>
+					</section>
+					<section data-markdown>
+						### Process Substitution
+
+						~~~console
+						## Programme, die nicht '-' als Dateiname für stdin/stdout
+						## als Konvention anbieten, kann Bash Pseudo-Dateien anlegen
+						## und als Argument übergeben:
+						$ cat <(echo "Hello World!")
+						Hello World!
+
+						## die Ausgabe von `echo` wird in einer Pseudo-Datei
+						## bereitgestellt und der Dateiname an `cat` übergeben
+						## zum Vergleich:
+						$ echo <(echo "Hello World!")
+						/dev/fd/63
+
+						## analog kann >(cmd) verwendet werden als Pseudo-Datei:
+						## was in diese geschrieben wird, dient als stdin für `cmd`
+						~~~
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Job Control</section>
+					<section data-markdown>
+						### Komandos im Hintergrund ausführen
+
+						~~~console
+						## mit `&` wird das Kommando im Hintergrund ausgeführt
+						$ sleep 100 &
+						[1] 475
+						## '1' ist die Job ID, 475 die Prozess-ID
+						$ # Shell ist sofort wieder Verfügbar
+						~~~
+					</section>
+					<section id="suspend-job" data-markdown>
+						### Kommandos unterbrechen
+
+						~~~console
+						## ein lange im Vordergrund laufendes Kommando kann
+						## mit C-z angehalten werden
+						$ sleep 100
+						^Z
+						[1]+  Stopped                 sleep 100
+						~~~
+
+						Hintergrund: mit `C-z` wird dem Vordergrundprozess ein `SIGSTOP`
+						gesendet, wodurch der Prozess angehalten wird.
+					</section>
+					<section data-markdown>
+						### angehaltene Jobs fortführen
+
+						~~~console
+						$ sleep 100
+						^Z
+						[1]+  Stopped                 sleep 100
+
+						## angehaltenen Job wieder im Vordergrund ausführen
+						$ fg
+						sleep 100
+
+						## oder:
+						## angehaltenen Job im Hintergrund weiter ausführen
+						$ bg
+						[1]+ sleep 100 &
+						$ # Shell ist sofort wieder Verfügbar
+						$ fg # Hintergrund-Job in Vordergrund holen
+						~~~
+					</section>
+					<section data-markdown>
+						### Hintergrund-Job abbrechen
+
+						~~~console
+						$ sleep 100
+						^Z
+						[1]+  Stopped                 sleep 100
+
+						## vorhandene Jobs auflisten
+						$ jobs
+						[1]+  Stopped                 sleep 100
+
+						## `SIGINT` an Job mit Job ID 1 senden
+						$ kill %1
+						$
+						[1]+  Terminated              sleep 100
+						~~~
+					</section>
+					<section data-markdown>
+						### Hintergrund-Job unabhängig machen
+
+						~~~console
+						## wird die Shell beendet, werden auch alle noch laufenden
+						## Hintergrund-Jobs beendet (`SIGHUP` wird gesendet).
+						## soll ein Job auch ohne Shell weiterlaufen, muss er von
+						## der Job-Tabelle enternt werden:
+						$ sleep 100 &
+						[1] 475
+						$ disown
+						$ exit # Shell beenden, `sleep` Job läuft trotzdem weiter
+						~~~
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Pattern Matching</section>
+					<section data-markdown>
+						### einfaches Pattern Matching
+
+						Gewisse Platzhalter in der Kommandozeile werden von der Shell durch
+						passende Datei-/Verzeichnisnamen ersetzt - _vor_ dem Aufruf des
+						Kommandos, d.h. dem Programm/Skript werden nur die ersetzten Pfade
+						übergeben.
+
+						Werden keine passenden Pfade gefunden, wird das Muster wie
+						eingegeben an das Programm/Skript übergeben.
+
+					</section>
+					<section data-markdown>
+						### einfaches Pattern Matching
+
+						* `*`: trifft auf null oder mehr beliebige Zeichen
+						* `?`: trifft auf genau ein beliebiges Zeichen
+						* `[...]`: trifft auf ein Zeichen aus der Gruppe
+
+						~~~sh
+						# '*' trifft auf alls zu (0, 1 oder mehr belibige Zeichen)
+						ls *     # listet alle Dateien/Verzeinisse im aktuellen
+						ls *.txt # listet alles, was mit '.txt' endet
+						ls */    # listet alle Verzeichnisse auf
+						ls D*    # listet alle Verzeinisse, die mit 'D' starten
+
+						# listet alle '.txt'-Dateien in den Verzeichnissen,
+						# die im aktuellen Verzeichnis sind (eine Ebene)
+						ls */*.txt
+
+						# listet alle '.txt'-Dateien in beliebig tiefer Ebene
+						ls **/*.txt
+
+						# '?' entspricht genau *einem* beliebigen Zeichen
+						ls *.??? # listet alle Dateien mit drei-Zeichen Endung
+						ls ??    # listet alle Pfade mit genau zwei Zeichen
+
+						# in `[]` können mehrere mögliche Zeichen angeben werden
+						ls [Dd]esktop # trifft auf 'desktop' und 'Desktop' zu
+						ls [A-Z0-9]*  # Pfade beginnend mit Großbuchstabe oder Zahl
+						ls [:digit:]* # Pfade beginnend mit einer Ziffer
+						~~~
+					</section>
+					<section data-markdown>
+						### erweitertes Pattern Matching
+
+						Zusätzlich mit Option `extglob` aktiviert (mit `shopt -s extglob`):
+
+						* `?(pattern)`: ein optionales Vorkommen
+						* `*(pattern)`: keins oder mehr Vorkommen
+						* `+(pattern)`: mindestens ein Vorkommen
+						* `@(pattern)`: eines der angegebenen Pattern
+						* `!(pattern)`: alles außer angegebenes Pattern
+
+						Mit `|` können mehrere Muster getrennt werden:
+
+						~~~sh
+						echo /?(s)bin   # trifft /bin und /sbin
+						echo /!(*bin*)  # trifft alles, was *nicht* 'bin' enthält
+						echo /*+(32|64) # alles was mit '32' oder '64' endet
+						~~~
+					</section>
+					<section data-markdown>
+						### Pattern Expansion
+
+						~~~console
+						## in `{}` können noch Teil-Patternsangegeben werden:
+						## durch Komma getrennt:
+						$ echo hello.{sh,txt}
+						hello.sh hello.txt
+
+						$ echo {hello,world}.{sh,txt}
+						hello.sh hello.txt world.sh world.txt
+
+						$ mv hello{.txt,}
+						## führt `mv hello.txt hello` aus
+						## -> entfernt die Dateiendung .txt
+
+						## mit `..` können Zahlenreihen generiert werden
+						$ echo file{1..5}
+						file1 file2 file3 file4 file5
+
+						## zusätzlich mit Schrittweite 2
+						$ echo file{1..10..2}
+						file1 file3 file5 file7 file9
+						~~~
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Shell Skripte</section>
+					<section data-markdown>
+						<script type="text/template">
+							### ausführbare Skripte erstellen
+
+							~~~console
+							## Shell Skripte werden von der Shell eingelesen und
+							## ausgeführt, analog zur interaktiven Eingabe:
+
+							$ echo 'echo "Hello World!"' > script.sh
+							$ bash ./script.sh
+
+							$ cat > script.sh <<EOT
+							> #!/bin/bash
+							> echo "Hello World!"
+							> EOT
+
+							$ chmod +x script.sh # Skript als ausführbar markieren
+							$ ./script.sh # Skript ausführen
+							Hello World!
+							~~~
+						</script>
+					</section>
+					<section data-markdown>
+						### Hintergrund: ausführbare Skripte
+
+						Um unter Unix-Systemen Skripte wie normale (Binär-)Programme
+						auszuführen, kann der sog. [_Shebang_](https://de.wikipedia.org/wiki/Shebang)
+						verwendet werden:
+
+						Die erste Zeile `#!/bin/bash` gibt an, dass `/bin/bash` als
+						Interpreter für das Skript verwendet werden soll.
+
+						Ist die Datei als ausführbar markiert (`chmod +x`), dann ist der
+						Aufruf `./script.sh` äquvalent zu `/bin/bash script.sh`.
+					</section>
+					<section data-markdown>
+						### Ausgabe und Exit Status
+
+						~~~sh
+						#!/bin/bash
+
+						echo "Text für stdout"
+						echo "Text für stderr" >&2
+
+						exit 1 # Fehler durch nicht-0 Exit status signalisieren
+
+						echo "Diese Zeile wird nie ausgeführt"
+						~~~
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `if`
+
+						~~~sh
+						#!/bin/bash
+
+						# ist der Exit Status der Bedingung 0 wird der `if`-Zweig
+						# ausgeführt, sonst der `else`-ZWeig (falls vorhanden)
+						if [ -f /tmp/foo ]
+						then
+							echo "Datei /tmp/foo existiert"
+						else
+							echo "Datei /tmp/foo existiert nicht"
+						fi
+
+						# `[ ... ]` ist nur Syntactic Sugar für `test ...`
+						if test -f /tmp/foo; then
+							echo "Datei /tmp/foo existiert"
+						fi
+
+						# `!` negiert die Bedingung
+						if ! test -f /tmp/foo; then
+							echo "Datei /tmp/foo existiert nicht"
+						fi
+						~~~
+
+						Siehe [`help if`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-if)
+					</section>
+					<section data-markdown>
+						### Bedingungen - `test`
+
+						`test` bzw. `[ ... ]` prüft viele Bedigungen:
+						~~~sh
+						[ -e path ] # Datei/Verzeichnis `path` existiert
+						[ -f file ] # Datei `file` existiert
+						[ -d path ] # Verzeichnis `path` existiert
+						[ -x file ] # Datei `file` ist ausführbar
+
+						[ -z "$var" ] # `$var` ist leer (zero)
+						[ -n "$var" ] # `$var` ist nicht leer
+						[ "$var" ] # `$var` ist nicht leer
+						[ "$string1" == "$string2" ] # Beide Strings sind gleich
+						[ "$string1" != "$string2" ] # Strings sind ungleich
+						[ "$string1"  < "$string2" ] # $string1 "kleiner" $string2
+
+						[ "$arg1" -eq "$arg2" ] # $arg1 gleich $arg2 ('equal')
+						[ "$arg1" -ne "$arg2" ] # $arg1 ungleich $arg2 ('not equal')
+						[ "$arg1" -lt "$arg2" ] # $arg1 kleiner $arg2 ('less then')
+						[ "$arg1" -le "$arg2" ] # $arg1 kleiner/gleich $arg2
+						[ "$arg1" -gt "$arg2" ] # $arg1 größer $arg2 ('greater')
+						[ "$arg1" -ge "$arg2" ] # $arg1 größer/gleich $arg2
+						~~~
+
+						Für mehr, siehe [`help test`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Bash-Conditional-Expressions)
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `if` - Tipps
+
+						~~~sh
+						# einfache if Blöcke können durch Komposition ersetzt werden:
+						if [ -f /tmp/foo ]; then
+							echo "Datei /tmp/foo existiert"
+						fi
+						# äquivalent zu
+						[ -f /tmp/foo ] && echo "Datei /tmp/foo existiert"
+
+						# else-Zweig / Negierung:
+						if ! test -f /tmp/foo; then
+							echo "Datei /tmp/foo existiert nicht"
+						fi
+						# äquivalent zu
+						[ -f /tmp/foo ] || echo "Datei /tmp/foo existiert nicht"
+						~~~
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `while`
+
+						~~~sh
+						# Syntax:
+						# while test-comand; do loop-commands; done
+
+						while ! [ -f /tmp/foo ]; do
+							echo "Erstelle /tmp/foo"
+							touch /tmp/foo
+						done
+						~~~
+
+						Siehe [`help while`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-while)
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `until`
+
+						~~~sh
+						# Syntax:
+						# until test-comand; do loop-commands; done
+
+						until [ -f /tmp/foo ]; do
+							echo "Erstelle /tmp/foo"
+							touch /tmp/foo
+						done
+						~~~
+
+						Siehe [`help until`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-until)
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `for ... in`
+
+						~~~sh
+						# Syntax:
+						# for var in word ...; do commands; done
+
+						for file in foo bar; do
+							echo "Erstelle /tmp/$file"
+							touch "/tmp/$file"
+						done
+
+						files="foo bar"
+						for file in $files; do touch $file; done
+
+						for file in /tmp/*; do echo $file; done
+
+						for file in $(ls /tmp/); do echo $file; done
+						~~~
+
+						Siehe [`help for`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-for)
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `case`
+
+						~~~sh
+						# Syntax:
+						# case word in
+						#   [ [(] pattern [| pattern]…) command-list ;;]…
+						# esac
+
+						parameter="--color=auto"
+						case $parameter in
+							--color=*)
+								echo "auto color"
+								;;
+							--long | -l) echo "long output" ;;
+							*)
+								echo "unknown parameter" ;;
+						esac
+						~~~
+
+						Siehe [`help case`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-case)
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `select`
+
+						~~~console
+						## Syntax:
+						## select var in words …; do commands; done
+						## wie `for ... in` nur als interaktives Menü
+						$ select color in red green blue; do echo $color; done
+						1) red
+						2) green
+						3) blue
+						#? 2
+						green
+						#? ^C
+						$
+
+						## nach erster Auswahl automatisch beenden
+						$ select choice in yes no; do echo $choice; break; done
+						1) yes
+						2) no
+						#? 1
+						yes
+						$
+						~~~
+
+						Siehe [`help select`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-select)
+					</section>
+					<section data-markdown>
+						### Besondere Variablen
+
+						* `$#`: Anzahl Argumente, mit denen das Skript aufgerufen wurde
+						* `$0`: Name, mit dem das Skript aufgerufen wurde
+						* `$1`: erstes Aufrufargument
+						* `$2`: zweites Aufrufargument
+						* `$3`: ...
+						* `$*` / `$@`: alle Aufrufargumente
+						* `$LINENO`: Zeilennummer im Skript
+					</section>
+					<section data-markdown>
+						### Arbeiten mit Argumenten
+
+						~~~sh
+						#!/bin/bash
+
+						if [ $# -lt 1 ]; then
+							echo "Dieses Skript braucht mindestens 1 Argument" >&2
+							exit 1
+						fi
+
+						echo "aufgerufen mit $# Argumenten"
+						echo "Das erste Argument ist: $1"
+						~~~
+					</section>
+					<section data-markdown>
+						### `$*` vs. `$@`
+
+						~~~sh
+						#!/bin/bash
+
+						for arg in "$*"; do echo "from \$*: $arg"; done
+						for arg in "$@"; do echo "from \$@: $arg"; done
+						~~~
+						~~~console
+						$ ./script.sh foo bar "Hello World"
+						from $*: foo bar Hello World
+						from $@: foo
+						from $@: bar
+						from $@: Hello World
+						~~~
+
+						* `"$*"` wird ersetzt durch **einen** String
+						* `"$@"` wird ersetzt durch **je** einen String pro Argument
+					</section>
+					<section data-markdown>
+						### Abarbeiten von Argumenten - `shift`
+
+						~~~sh
+						#!/bin/bash
+
+						while [ $# -ge 1 ]; do
+							echo "Noch $# Argument(e):"
+							echo "$1"
+							# erstes Argument verwerfen und neu nummerieren
+							# $1=$2, $2=$3, $3=$4, ...
+							shift
+						done
+						~~~
+						~~~console
+						$ ./script.sh foo bar
+						Noch 2 Argument(e):
+						foo
+						Noch 1 Argument(e):
+						bar
+						~~~
+
+						Siehe [`help shift`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-shift)
+					</section>
+					<section data-markdown>
+						### Funktionen
+
+						~~~sh
+						function hello() {
+							# funktions-lokale Variable definieren
+							# Positionsparameter hier vom Funktionsaufruf
+							local name="$1"
+
+							# auf globale Variable zugreifen
+							echo "$GREETING, $name!"
+
+							# Exit Status setzen
+							return 123
+						}
+
+						GREETING=Hello
+						hello World # "Hello, World!"
+						echo $? # "123" -> Misserfolg
+						~~~
+					</section>
+					<section data-markdown>
+						### Input einlesen - `read`
+
+						~~~sh
+						# eine Zeile in Variable einlesen
+						read name
+						echo "Hello, $name" # Hello, Alice
+
+						while read -p "Dateiname: " file; do
+							[ "$file" ] || break
+							touch "$file"
+						done
+
+						ls *.txt | while read file; do cat "$file"; done
+						~~~
+
+						Siehe [`help read`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-read)
+					</section>
+					<section data-markdown>
+						### Dateien importieren - `source`
+
+						~~~sh
+						# hello.sh
+						hello() {
+							echo "Hello, $1!"
+						}
+
+						NAME=Alice
+						~~~
+						~~~sh
+						source hello.sh
+						hello $NAME # "Hello, Alice!"
+						~~~
+						~~~sh
+						. hello.sh # kürzere Schreibweise
+						hello $NAME # "Hello, Alice!"
+						~~~
+
+						Siehe [`help source`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-source)
+					</section>
+					<section data-markdown>
+						### Debugging-Ausgabe aktivieren
+
+						~~~sh
+						#!/bin/bash
+
+						# Debugging-Ausgabe aktivieren:
+						# jedes Kommando vor dem Ausführen ausgeben
+						set -x
+
+						read -p "Namen eingeben: " name
+						[ "$name" ] && echo "Hello, $name"
+						~~~
+						~~~console
+						$ ./script.sh
+						+ read -p 'Namen eingeben: ' name
+						Namen eingeben: Alice
+						+ '[' Alice ']'
+						+ echo 'Hello, Alice'
+						Hello, Alice
+						~~~
+
+						Siehe [`help set`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin).
+					</section>
+					<section data-markdown>
+						### Bei Fehler abbrechen
+
+						~~~sh
+						# Fehlerbehandlung kann sehr unübersichtlich werden
+						mkdir foo || exit 1
+						touch foo/bar || exit 1
+						echo Test > foo/bar || exit 1
+						~~~
+						vs.
+						~~~sh
+						# bei Fehler Skript automatisch beenden
+						set -e
+
+						mkdir foo
+						touch foo/bar
+						echo Test > foo/bar
+						~~~
+
+						Siehe [`help set`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin).
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>### Konfiguration der Shell</section>
+					<section data-markdown>
+						### Konfigurationsdateien
+
+						* Konfigurationsdateien sind einfache Skripte, die im Kontext
+						  der Shell ausgeführt werden -> erlaubt setzen von Variable,
+						  Funktionen, Aliassen etc.
+						* `~/.bash_profile`: wird geladen beim Start als Login-Shell
+						* `~/.bashrc`: wird geladen beim Start als interaktive nicht-Login-Shell
+						* `~/.bash_logout`: wird beim Beenden einer Login-Shell ausgeführt
+						* `~/.bash_history`: speichert automatisch ausgeführte Befehle
+					</section>
+					<section data-markdown>
+						### Konfigurationsbeispiele
+
+						~~~sh
+						# ~/.bash_profile
+
+						# .bashrc laden, falls vorhanden
+						[ -f ~/.bashrc ] && . ~/.bashrc
+						~~~
+
+						~~~sh
+						# ~/.bashrc
+
+						alias ll='ls -l' # Alias für häufig benutzten Befehl
+
+						PATH=$PATH:~/bin # Programme in ~/bin zu Suchpfad hinzufügen
+
+						fortune | cowsay # Glückskeksspruch beim Start anzeigen ;)
+						~~~
+
+						~~~sh
+						# ~/.bash_logout
+
+						# Bildschirminhalt leeren
+						clear
+						~~~
+
+						Siehe [_Bash Startup Files_](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Bash-Startup-Files)
+					</section>
+					<section data-markdown>
+						### Aliasse
+
+						~~~console
+						## mit Aliassen lassen sich lange Befehle/Optionen abkürzen
+						$ alias ll='ls -l'
+						$ ll listing.txt # das selbe wie `ls -l listing.txt`
+						-rw-r--r-- 1 alice alice 24 Sep 29 16:53 listing.txt
+
+						## man kann *immer* verwendete Optionen hinzufügen
+						$ alias ls='ls -l'
+						$ ls listing.txt # tatsächlich `ls -l listing.txt`
+						-rw-r--r-- 1 alice alice 24 Sep 29 16:53 listing.txt
+						~~~
+
+						Siehe[ `help alias`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Aliases)
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							### Autovervollständigung verbessern
+
+							~~~console
+							## mit dem Built-in `complete` kann konfiguriert werden, wie
+							## Vervollständigungen für bestimmte Befehle generiert werden
+
+							## Liste möglicher Parmeter für `ll` angeben
+							$ complete -W "-a --all -h --human-readable --color" ll
+
+							$ ll <Tab>
+							$ ll -<Tab><Tab>
+							--color  -1       -a
+							$ ll --<Tab>
+							$ ll --color
+							~~~
+						</script>
+					</section>
+					<section data-markdown>
+						### eigene Autovervollständigung
+
+						~~~sh
+						# für komplexere Vervollständigungen können eigene Funktionen
+						# definiert werden:
+						_ll_complete() {
+							local opts="-a --all -h --human-readable --color"
+							# $COMP_WORDS enthält die bereits eingegebenen Wörter
+							# $COMP_CWORD ist der Index des aktuellen Wortes
+							# `compgen` generiert Vorschläge aus Liste und Wort
+							# $COMPREPLY muss mit den Ergebnissen gesetzt werden
+							local word="${COMP_WORDS[$COMP_CWORD]}"
+							COMPREPLY=($(compgen -W "$opts" -- "$word"))
+						}
+
+						complete -F _ll_complete ll
+						~~~
+
+						Siehe [_Programmable Completion_](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Programmable-Completion)
+					</section>
+					<section data-markdown>
+						<script type="text/template">
+							### Tipp: fertige `bash-completion` installieren
+
+							+ statt die Funktionen selbst zu schreiben,
+							lieber fertige Skripte verwenden!
+							* Paket `bash-completion` bei vielen Distributionen vorhanden,
+							enthält Funktionen für viele gängige Tools
+							* fertige Funktionen für [`git`](https://github.com/git/git/blob/master/contrib/completion/git-completion.bash)
+							* fertige Funktionen für [`npm`](https://docs.npmjs.com/cli-commands/completion.html)
+							* sonst, Google bemühen: "_&lt;tool&gt; bash-completion_"!
+						</script>
+					</section>
+					<section data-markdown>
+						### Eingabeprompt anpassen
+
+						~~~console
+						## der Eingabeprompt kann mit $PS1 konfiguriert werden
+						$ PS1='\u@\h:\w\$ '
+						alice@localhost:~/projects/workshops$
+
+						$ PS1='\u \W: '
+						alice workshops:
+
+						$ PS1='\t \W >> '
+						11:31:18 workshops >>
+
+						## $PS1 wird stets neu evaluiert: Erfolgsindikator einfügen
+						$ PS1='$([ $? = 0 ] && echo ✓ || echo ✗) \w $ '
+						✓ ~/projects/workshops $ false
+						✗ ~/projects/workshops $
+						~~~
+					</section>
+					<section data-markdown>
+						### Variablen für Eingabeprompt
+
+						* `\u`: Benutzername
+						* `\h`/`\H`: kurzer/langer Hostname
+						* `\w`/`\W`: volles/abgekürztes Arbeitsverzeichnis
+						* `\t`: aktuelle Uhrzeit
+						* `\$`: `#` für root-User, `$` sonst
+						* `\n`: Zeilenumbruch
+						* `\e`: Escapezeichen
+
+						Für mehr, siehe [_Controlling the Prompt_](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Controlling-the-Prompt)
+					</section>
+					<section data-markdown>
+						### Farben im Terminal
+
+						* durch nicht-sichtbare Zeichen gesteuert
+						* Sequenz für Farben: `&lt;Esc&gt;[&lt;code(s)&gt;m`
+						* _Code(s)_ durch `;` getrennt für z.B.:
+							* `0`: Reset - alles zurücksetzen
+							* `1`: Formatierung **fett** drucken
+							* `30`/`40`: Schwarz als Vorder-/Hintergrund
+							* `31`/`41`: Rot als Vorder-/Hintergrund
+							* `32`/`42`: Grün als Vorder-/Hintergrund
+							* `34`/`44`: Blau als Vorder-/Hintergrund
+							* `37`/`47`: Weiß als Vorder-/Hintergrund
+
+						Siehe [_ANSI Color Codes_](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors)
+					</section>
+					<section data-markdown>
+						### Farben im Prompt
+
+						~~~sh
+						# Beispiele:
+						# Benutzername grün, Verzeichnis blau und fett, danach Reset
+						PS1='\e[32m\u \e[1;34m\w\e[0m $ '
+
+						# Erfolgsindikator grün/rot färben
+						PS1='$([ $? = 0 ] && echo "\e[1;32m✓" || echo "\e[1;31m✗")\e[0m \w $ '
+						~~~
+					</section>
+					<section data-markdown>
+						### Tipp - fertige Prompts nutzen
+
+						* auch für Eingabeprompts gibt es viele fertige Pakete
+						* [Prompt mit Infos zum `git`-Repo](https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh)
+						* viele [Beispiele online zu finden](https://github.com/alebcay/awesome-shell#customization)
+					</section>
+				</section>
+
+				<section>
+					<section data-markdown>## Wichtige Befehle im Detail</section>
+					<section data-markdown>
+						### Wichtige Unix-Tools
+
+						~~~
+						* awk
+						* basename
+						* cat
+						* cd
+						* comm
+						* cp
+						* cut
+						* date
+						* diff / patch
+						* dirname
+						* du
+						* file
+						* find
+						* getopts
+						* grep
+						* gzip
+						* head
+						* less
+						* ln
+						* ls
+						* md5sum / sha1sum
+						* mkdir
+						* mktemp
+						* more
+						* mv
+						* pwd
+						* rename
+						* rev
+						* rm
+						* sed
+						* sleep
+						* sort
+						* tac
+						* tail
+						* tar
+						* touch
+						* tr
+						* wc
+						* wget / curl
+						* which
+						~~~
+					</section>
+					<section data-markdown>
+						### Bash Bult-ins
+
+						~~~
+						* complete
+						* disown
+						* echo
+						* eval
+						* exec
+						* fg / bg
+						* history
+						* kill
+						* printf
+						* read
+						* shift
+						* source
+						* test
+						* trap
+						* type
+						* unalias
+						* unset
+						* wait
+						~~~
+					</section>
+				</section>
+
+				<section data-markdown>### Praxisübungen</section>
 			</div>
 		</div>
 
