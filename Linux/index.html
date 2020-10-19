@@ -70,6 +70,10 @@
 						[Übersicht wichtiger Befehle im Detail](#cmds-overview),
 						die zu den Basiswerkzeugen gehören und ebenfalls fast immer
 						bereits vorinstalliert sind.
+
+						Am Ende eines Abschnitts können außerdem noch kleine
+						[Praxisübungen](#exercises-overview) gefunden werden, um das gerade
+						gezeigte direkt anzuwenden.
 					</section>
 					<section id="basics-overview" data-markdown>
 						### Übersicht Grundlagen
@@ -90,6 +94,68 @@
 						* [Pattern Matching](#sec-pattern-matching)
 						* [Shell Skripte](#sec-scripting)
 						* [Konfiguration der Shell](#sec-config)
+					</section>
+					<section id="exercises-overview" class="text-left" data-markdown>
+						### Praxisübungen
+
+						Am Ende jedes Abschnitts findest du ein paar Praxisübungen, um das
+						gezeigte direkt selber auszuprobieren und besser zu verstehen.
+
+						Auf der nächsten Seite findest du
+						[eine Anleitung](#exercises-setup), mit der du dir
+						schnell ein paar Testdaten herunterladen kannst.
+
+						Auf den darauffolgenden Seiten findest du je eine Übersicht der
+						Übungen für [Grundlagen](#exercises-basics) und für
+						[fortgeschrittene Themen](#exercises-advanced).
+
+					</section>
+						<section id="exercises-setup" data-markdown>
+							### Praxisübungen
+							#### Testumgebung einrichten
+
+							~~~sh
+							# kopiere folgende Zeilen in dein Terminal, um einen neuen
+							# Ordner 'projects' im aktuellen Verzeichnis zu erstellen und
+							# darin einige Dateien vom BDSU herunterzuladen.
+							# Diese kannst du dann als Testdaten für die Praxisübungen
+							# verwenden. Die meisten Übungen gehen davon aus, dass du dich
+							# zu Beginn im Verzeichnis 'projects' befindest.
+
+							mkdir projects
+							cd projects
+							for repo in workshops admin-scripts jingle; do
+							  url="https://github.com/BDSU/${repo}/archive/master.tar.gz"
+							  curl -L "$url" | tar -xz
+							  mv "${repo}-master" "$repo"
+							done
+							~~~
+
+							Siehe [`mkdir`](#cmd-mkdir), [`cd`](#cmd-cd),
+							[`for..in`](#cntrl-for-in), [`curl`](#cmd-curl),
+							[`tar`](#cmd-tar), [`mv`](#cmd-mv)
+						</section>
+					<section id="exercises-basics" data-markdown>
+						### Praxisübungen
+						#### Grundlagen und Wiederholung
+
+						* [Grundlagen](#exercise-basics)
+						* [Dateisystempfade](#exercise-paths)
+						* [Navigieren und Arbeiten mit Dateien](#exercise-basic-cmds)
+						* [Ausgabeumleitung und Pipes](#exercise-basic-pipes)
+					</section>
+					<section id="exercises-advanced" data-markdown>
+						### Praxisübungen
+						#### fortgeschrittene Themen
+
+						* [Tastenkombinationen für Power-User](#exercise-keys)
+						* [Variablen](#exercise-vars)
+						* [Komposition von Kommandos](#exercise-composition)
+						* [Fortgeschrittene Pipes](#exercise-pipes)
+						* [Job Control](#exercise-jobs)
+						* [Pattern Matching](#exercise-pattern-matching)
+						* [Shell Skripte](#exercise-scripting)
+						* [Konfiguration der Shell](#exercise-config)
 					</section>
 				</section>
 
@@ -193,6 +259,13 @@
 						  `ls --help`
 						* ebenfalls oft vorhanden: `--version`
 					</section>
+					<section id="exercise-basics" data-markdown>
+						### Praxisübung - Grundlagen
+
+						* lasse dir den String _"Hallo Welt"_ ausgeben
+						* lasse dir die Dokumentation von `ls` anzeigen
+							* Hinweis: `man`, beenden mit `q`
+					</section>
 				</section>
 
 				<section id="sec-paths">
@@ -252,6 +325,17 @@
 						* persönliche Konfigurationen werden in versteckten
 						  Dateien/Verzeichnissen im Home-Verzeichnis abgelegt
 						  (z.B. `~/.ssh/`, `~/.bashrc`)
+					</section>
+					<section id="exercise-paths" data-markdown>
+						### Praxisübungen - Dateisystempfade
+
+						1. wechsel in das Verzeichnis `projects/workshops/Linux`
+						   ([siehe](#exercises-setup))
+						2. lasse dir den Inhalt des aktuellen Verezeichnisses anzeigen
+						3. wechsel in das Verzeichnis eine Ebene höher
+						4. lasse dir dein aktuelles Verzeichnis anzeigen
+						5. wechsel in dein Home-Verzeichnis
+						6. wechsel wieder zurück in das vorherige Verzeichnis
 					</section>
 				</section>
 
@@ -408,6 +492,18 @@
 						## beenden mit `q` (quit)
 						~~~
 					</section>
+					<section id="exercise-basic-cmds" data-markdown>
+						### Praxisübung - Navigieren auf der Kommandozeile
+
+						1. erstelle ein neues Verzeichnis und wechsel dort hinein
+						2. kopiere die Dateien `/etc/passwd` und `/etc/bash.bashrc`
+						   in das aktuelle Verzeichnis
+						3. benenne die Datei `passwd` um in `users`
+						4. lass den Inhalt von `users` ausgeben
+						5. lasse dir den Inhalt von `bash.bashrc` mit `less` anzeigen
+						6. wechsel zurück in das vorherige Verzeichnis und lösche das
+						   Verzeichnis, das du erstellt hast, wieder
+					</section>
 				</section>
 
 				<section id="sec-basic-pipes">
@@ -519,6 +615,18 @@
 						[`sort`](#cmd-sort), [`grep`](#cmd-grep), [`wc`](#cmd-wc),
 						[`cowsay`](https://linux.die.net/man/1/cowsay)
 					</section>
+					<section id="exercise-basic-pipes" data-markdown>
+						### Praxisübungen - Pipes Grundlagen
+
+						1. erstelle eine neue Datei mit Inhalt `Hallo Welt`
+						2. lasse dir den Inhalt deiner Datei anzeigen
+							* lasse dir den Inhalt _rückwärts_ anzeigen
+							* lasse dir anzeige, wie viele Zeichen deine Datei enthält
+						3. füge die Zeile `Hallo, &lt;dein Name&gt;` an die Datei an
+						   und wiederhole 2.
+						4. sortiere die Datei zeichenweise umgekehrt und lasse das Ergebnis
+						   wieder in der richtigen Zeichenreihenfolge ausgeben
+					</section>
 				</section>
 
 				<section id="sec-keys">
@@ -627,6 +735,17 @@
 						* `M-<`: zum Anfang der History springen
 						* `M->`: ans Ende der History springen
 						* `M-.`, `M-_`: letztes Argument des letzten Befehls einfügen
+					</section>
+					<section id="exercise-keys" data-markdown>
+						### Praxisübungen - Tastenkombinationen
+
+						* durchsuche die History nach dem _vorletzten_ Vorkommen von `ls`
+						* gib `ls workshops/Linux/index.html` mit weniger als
+						  10 Tastendrücken ein!
+						* starte das Kommando [`sleep 100`](#cmd-sleep) und beende es vor
+						  Ablauf der angegebenen Zeit
+						* führe das Kommando `cat` aus und beende die Eingabe, ohne den
+						  Prozess abzubrechen
 					</section>
 				</section>
 
@@ -834,6 +953,19 @@
 						/home/alice/projects
 						~~~
 					</section>
+					<section id="exercise-vars" data-markdown>
+						### Praxisübungen - Variablen
+
+						* lasse dir den aktuellen Wert von `$PATH` ausgeben
+						* erstelle `$users_file` mit Wert `/etc/passwd`
+						* erstelle eine Variable `$users_count` mit der Anzahl der Zeilen in `/etc/passwd`
+							* verwende dabei die Variable `$users_file`
+							* Hinweis: [`wc`](#cmd-wc)
+						* gib nur das erste Element von `$PATH` aus
+						* gib `$PATH` aus, mit allen _bin_ ersetzt durch _sein_
+						* erstelle `$base` mit dem Namen des aktuellen Verzeichnisses
+							* Hinweis: lösbar mit **und** ohne [`basename`](#cmd-basename)
+					</section>
 				</section>
 
 				<section id="sec-composition">
@@ -917,6 +1049,17 @@
 						~~~
 
 						Siehe auch [Doku](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Command-Grouping)
+					</section>
+					<section id="exercise-composition" data-markdown>
+						### Praxisübungen - Komposition
+
+						* erstelle das Verzeichnis `test` und wechsel hinein - mit einem einzigen Befehl
+						* führe einen Befehl aus, dessen Exit Status _kein Erfolg_ signalisiert
+						* lasse dir den Exit Status des letzten Befehls anzeigen
+						* erstelle eine neue Datei `foo`, benenne sie um zu `bar` und lösche sie wieder
+							* alles mit nur einer Befehlszeile
+							* jede Teilaktion nur nach Erfolg der vorhiergen
+							* wenn eine der Aktionen fehlschlägt, gib eine eigene Fehlermeldung aus
 					</section>
 				</section>
 
@@ -1021,7 +1164,7 @@
 						## und von der "Datei" stdin ('-')
 						~~~
 					</section>
-					<section data-markdown>
+					<section id="here-documents" data-markdown>
 						<script type="text/template">
 							### _Here Documents_
 
@@ -1094,6 +1237,18 @@
 						## analog kann >(cmd) verwendet werden als Pseudo-Datei:
 						## was in diese geschrieben wird, dient als stdin für `cmd`
 						~~~
+					</section>
+					<section id="exercise-pipes" data-markdown>
+						### Praxisübungen - Pipes
+
+						* lasse dir den Namen aller Nutzer ausgeben (erste Spalte in
+						  `/etc/passwd`), die `/bin/bash` als Shell verwenden (letzte Spalte)
+							* Hinweis: [`grep`](#cmd-grep), [`cut`](#cmd-cut)
+							* Bonus: lasse das Ergebnis mit [`less`](#cmd-less) anzeigen
+						* rufe `ls -l` für eine nicht-existierende Datei auf und lasse die
+						  Fehlermeldung davon rückwärts ausgeben
+							* füge eine existierende Datei zum Aufruf hinzu
+							* die Ausgabe der zweiten Datei soll verworfen werden
 					</section>
 				</section>
 
@@ -1176,6 +1331,17 @@
 						$ disown
 						$ exit # Shell beenden, `sleep` Job läuft trotzdem weiter
 						~~~
+					</section>
+					<section id="exercise-jobs" data-markdown>
+						### Praxisübungen - Job Control
+
+						* starte `sleep 1000` und breche es nach 5s ab
+						* starte einen Befehl _im Hintergrund_, der dir nach 30s die
+						  Nachricht _Fertig!_ ausgibt (siehe [_Komposition_](#sec-composition))
+						* starte den vorherigen Befehl 3 mal, bevor der erste beendet;
+						  setze den ersten dann im Vordergrund fort
+						* starte `sleep 1000` im Vordergrund und verschiebe ihn
+						  danach in den Hintergrund
 					</section>
 				</section>
 
@@ -1268,6 +1434,18 @@
 						$ echo file{1..10..2}
 						file1 file3 file5 file7 file9
 						~~~
+					</section>
+					<section id="exercise-pattern-matching" data-markdown>
+						### Praxisübungen - Shell-Patterns
+
+						* gib alle Dateien mit Dateiendung 'md' in den
+						  aktuellen Unterverzeichnissen aus
+						* lasse dir _rekursiv_ alle HTML-Dateien im Verzeichnis
+						  `workshops` mit `echo` ausgeben
+						* gib alle Kombinationen von `a`, `b` und `c` mit den
+						  Zahlen 1-10 aus (`a1`, `a1`, ... `b1` ... `c10`)
+						* lasse dir im Verzeichnis `jingle` den String `*.*`
+						  (genau so) ausgeben
 					</section>
 				</section>
 
@@ -1427,7 +1605,7 @@
 
 						Siehe [`help until`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-until)
 					</section>
-					<section data-markdown>
+					<section id="cntrl-for-in" data-markdown>
 						### Kontrollstrukturen - `for ... in`
 
 						~~~sh
@@ -1621,7 +1799,7 @@
 						hello # "Hello, World!"
 						~~~
 					</section>
-					<section data-markdown>
+					<section id="cmd-echo" data-markdown>
 						### Text ausgeben - `echo`
 
 						~~~console
@@ -1735,6 +1913,21 @@
 						~~~
 
 						Siehe [`help set`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin).
+					</section>
+					<section id="exercise-scripting" data-markdown>
+						### Praxisübung - Shell-Skripte
+
+						1. Erstelle ein Skript, das für ein angebenes Verzeichnis
+						   die Anzahl der enthaltenen Elemente ausgibt
+						2. Ohne Argumente soll eine Fehlermeldung auf _stderr_ ausgegeben
+						   werden sowie eine Anleitung mit Beispielausgabe
+						   (siehe [_Here Documents_](#here-documents))
+						3. Erlaube den Aufruf mit beliebig vielen Argumenten und gib
+						   jeweils den [`basename`](#cmd-basename) mit aus
+						4. Gib eine Fehlermeldung aus, wenn ein Pfad eine Datei ist,
+						   und eine andere, für nicht-existente Pfade
+						5. Bei `-` soll der Pfad interaktiv eingegeben werden
+						6. Implementiere 1. und 2. als Funktion
 					</section>
 				</section>
 
@@ -1923,6 +2116,19 @@
 						* auch für Eingabeprompts gibt es viele fertige Pakete
 						* [Prompt mit Infos zum `git`-Repo](https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh)
 						* viele [Beispiele online zu finden](https://github.com/alebcay/awesome-shell#customization)
+					</section>
+					<section id="exercise-config" data-markdown>
+						### Praxisübungen - Shell-Konfiguration und Anpassung
+
+						* erstelle Aliasse, sodass [`ls`](#cmd-ls) und [`grep`](#cmd-grep)
+						  _immer_ Farben verwenden (`--color`)
+						* in `.bashrc`:
+							* füge `~/bin` zu `$PATH` hinzu, _wenn_ es existiert
+							* füge die erstellten Aliasse hinzu
+							* erstelle eine Funktion/Alias, um ein Verzeichnis zu
+							   erstellen und direkt hineinzuwechseln
+						* füge die Uhrzeit zum Shell-Prompt hinzu
+						* färbe den (Base-)Namen des Arbeitsverzeichnisses im Prompt blau
 					</section>
 				</section>
 
