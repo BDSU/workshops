@@ -9,6 +9,3 @@ UiPath funktioniert **nur** auf Windows.
 
 Wenn noch Fragen oder Unklarheiten existieren schreibt mich einfach an:
 alvaro.jacobs_fernandez@bdsu.de
-
-
-

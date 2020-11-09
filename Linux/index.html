@@ -26,17 +26,140 @@
 				border-radius: 0.3rem;
 				padding: 0.05rem 0.2rem;
 			}
+
+			.text-left p {
+				text-align: left;
+			}
 		</style>
 	</head>
 
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section data-markdown>
-					# Grundlagen der Linux-Shell
+				<section>
+					<section data-markdown>
+						# Grundlagen der Linux-Shell
+					</section>
+					<section class="text-left" data-markdown>
+						## Disclaimer
+
+						Diese Präsentation ist eine ausführliche Einführung in die
+						Linux-Shell.
+
+						Konkret wird dabei die
+						[_**B**ourne-**A**gain-**S**hell_, kurz `bash`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Introduction),
+						vorgestellt, welche besonders weit verbreitet ist: sie ist auf fast
+						jedem Unix-System wie Linux aber auch MacOS vorinstalliert.
+
+						Die `bash` ist dabei jedoch nur eine von vielen verfügbaren Shells.
+						Auch wenn einige Details `bash`-spezifisch sein werden, sind die
+						meisten Konzepte aber direkt auch auf andere Shells übertragbar.
+					</section>
 				</section>
 
 				<section>
+					<section data-markdown>## Einleitung und Übersicht</section>
+					<section class="text-left" data-markdown>
+						### Einleitung
+
+						In dieser Präsentation werden zunächst nochmal die
+						[Grundlagen](#basics-overview) wiederholt, um anschließend mit
+						[fortgeschrittenen Themen](#advanced-overview) tiefer einzusteigen.
+
+						Am Ende findet sich eine
+						[Übersicht wichtiger Befehle im Detail](#cmds-overview),
+						die zu den Basiswerkzeugen gehören und ebenfalls fast immer
+						bereits vorinstalliert sind.
+
+						Am Ende eines Abschnitts können außerdem noch kleine
+						[Praxisübungen](#exercises-overview) gefunden werden, um das gerade
+						gezeigte direkt anzuwenden.
+					</section>
+					<section id="basics-overview" data-markdown>
+						### Übersicht Grundlagen
+
+						* [Grundlagen](#sec-basics)
+						* [Dateisystempfade](#sec-paths)
+						* [wichtige Befehle zum Navigieren und Arbeiten mit Dateien](#sec-basic-cmds)
+						* [Ausgabeumleitung und Pipes](#sec-basic-pipes)
+					</section>
+					<section id="advanced-overview" data-markdown>
+						### Übersicht fortgeschrittene Themen
+
+						* [Tastenkombinationen für Power-User](#sec-keys)
+						* [Variablen](#sec-vars)
+						* [Komposition von Kommandos](#sec-composition)
+						* [Fortgeschrittene Pipes](#sec-pipes)
+						* [Job Control](#sec-jobs)
+						* [Pattern Matching](#sec-pattern-matching)
+						* [Shell Skripte](#sec-scripting)
+						* [Konfiguration der Shell](#sec-config)
+					</section>
+					<section id="exercises-overview" class="text-left" data-markdown>
+						### Praxisübungen
+
+						Am Ende jedes Abschnitts findest du ein paar Praxisübungen, um das
+						gezeigte direkt selber auszuprobieren und besser zu verstehen.
+
+						Auf der nächsten Seite findest du
+						[eine Anleitung](#exercises-setup), mit der du dir
+						schnell ein paar Testdaten herunterladen kannst.
+
+						Auf den darauffolgenden Seiten findest du je eine Übersicht der
+						Übungen für [Grundlagen](#exercises-basics) und für
+						[fortgeschrittene Themen](#exercises-advanced).
+
+					</section>
+						<section id="exercises-setup" data-markdown>
+							### Praxisübungen
+							#### Testumgebung einrichten
+
+							~~~sh
+							# kopiere folgende Zeilen in dein Terminal, um einen neuen
+							# Ordner 'projects' im aktuellen Verzeichnis zu erstellen und
+							# darin einige Dateien vom BDSU herunterzuladen.
+							# Diese kannst du dann als Testdaten für die Praxisübungen
+							# verwenden. Die meisten Übungen gehen davon aus, dass du dich
+							# zu Beginn im Verzeichnis 'projects' befindest.
+
+							mkdir projects
+							cd projects
+							for repo in workshops admin-scripts jingle; do
+							  url="https://github.com/BDSU/${repo}/archive/master.tar.gz"
+							  curl -L "$url" | tar -xz
+							  mv "${repo}-master" "$repo"
+							done
+							~~~
+
+							Siehe [`mkdir`](#cmd-mkdir), [`cd`](#cmd-cd),
+							[`for..in`](#cntrl-for-in), [`curl`](#cmd-curl),
+							[`tar`](#cmd-tar), [`mv`](#cmd-mv)
+						</section>
+					<section id="exercises-basics" data-markdown>
+						### Praxisübungen
+						#### Grundlagen und Wiederholung
+
+						* [Grundlagen](#exercise-basics)
+						* [Dateisystempfade](#exercise-paths)
+						* [Navigieren und Arbeiten mit Dateien](#exercise-basic-cmds)
+						* [Ausgabeumleitung und Pipes](#exercise-basic-pipes)
+					</section>
+					<section id="exercises-advanced" data-markdown>
+						### Praxisübungen
+						#### fortgeschrittene Themen
+
+						* [Tastenkombinationen für Power-User](#exercise-keys)
+						* [Variablen](#exercise-vars)
+						* [Komposition von Kommandos](#exercise-composition)
+						* [Fortgeschrittene Pipes](#exercise-pipes)
+						* [Job Control](#exercise-jobs)
+						* [Pattern Matching](#exercise-pattern-matching)
+						* [Shell Skripte](#exercise-scripting)
+						* [Konfiguration der Shell](#exercise-config)
+					</section>
+				</section>
+
+				<section id="sec-basics">
 					<section data-markdown>## Grundlagen</section>
 					<section>
 						<h3>Shell-Prompt</h3>
@@ -112,7 +235,7 @@
 						### Konventionen für Befehle
 
 						* sehr oft verwendete Kommandos sind meist sehr kurz:
-						  `cd`, `ls`, `cp`, `mv`
+						  [`cd`](#cmd-cd), [`ls`](#cmd-ls), [`cp`](#cmd-cp), [`mv`](#cmd-mv)
 						* Optionen in Langform werden mit zwei `--` angegeben:
 						  `ls --all`
 						* Optionen in Kurzform werden mit einem `-` und einem Zeichen angegeben:
@@ -120,25 +243,34 @@
 						* Kurzformen können mit einem `-` zusammengefasst werden:
 						  `ls -l -a` == `ls -la`
 						* Optionen können zusätzliche Parameter erfordern:
-						  `ls --color=auto`
+						  `ls --width=80` / `ls -w 80`
 						* _keine Ausgabe_ bedeutet _Erfolg_
 					</section>
 					<section data-markdown>
 						### Hilfe bekommen
 
-						* mit `man` kann eine ausführliche Dokumentation zu einem
-						  Befehl angezeigt werden (die _**Man**unal Page_): `man ls`
-						* Kommandos, die Teil der Shell sind, geben mit `help` Hilfe
-						  z.B. `help echo`
+						* mit [`man`](https://man7.org/linux/man-pages/man1/man.1.html)
+						  kann eine ausführliche Dokumentation zu einem Befehl angezeigt
+						  werden (die _**Man**unal Page_), z.B: `man ls` (beenden mit `q`)
+						* Kommandos, die Teil der Shell sind, geben mit
+						  [`help`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-help)
+						  Hilfe, z.B. `help echo`
 						* viele Kommandos zeigen mit `--help`/`-h` eine kurze Hilfe an:
 						  `ls --help`
 						* ebenfalls oft vorhanden: `--version`
 					</section>
+					<section id="exercise-basics" data-markdown>
+						### Praxisübung - Grundlagen
+
+						* lasse dir den String _"Hallo Welt"_ ausgeben
+						* lasse dir die Dokumentation von `ls` anzeigen
+							* Hinweis: `man`, beenden mit `q`
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-paths">
 					<section data-markdown>## Dateisystempfade</section>
-					<section data-markdown>
+					<section id="path-basics" data-markdown>
 						### Pfadangaben
 
 						Dateisystempfade zu Verzeichnissen und Dateien können
@@ -194,9 +326,20 @@
 						  Dateien/Verzeichnissen im Home-Verzeichnis abgelegt
 						  (z.B. `~/.ssh/`, `~/.bashrc`)
 					</section>
+					<section id="exercise-paths" data-markdown>
+						### Praxisübungen - Dateisystempfade
+
+						1. wechsel in das Verzeichnis `projects/workshops/Linux`
+						   ([siehe](#exercises-setup))
+						2. lasse dir den Inhalt des aktuellen Verezeichnisses anzeigen
+						3. wechsel in das Verzeichnis eine Ebene höher
+						4. lasse dir dein aktuelles Verzeichnis anzeigen
+						5. wechsel in dein Home-Verzeichnis
+						6. wechsel wieder zurück in das vorherige Verzeichnis
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-basic-cmds">
 					<section data-markdown>## wichtige Befehle zum Navigieren und Arbeiten mit Dateien</section>
 					<section data-markdown>
 						### aktuelles Arbeitsverzeichnis ausgeben
@@ -272,7 +415,7 @@
 						## `file1.txt` und `file2.txt` in `./Desktop/` kopieren
 						$ cp file1.txt file2.txt Desktop/
 
-						## Kopie des Verzeichnisses `Desktop` ertellen
+						## Kopie des Verzeichnisses `Desktop` erstellen
 						$ cp -a Desktop/ Desktop_backup
 						~~~
 
@@ -349,9 +492,21 @@
 						## beenden mit `q` (quit)
 						~~~
 					</section>
+					<section id="exercise-basic-cmds" data-markdown>
+						### Praxisübung - Navigieren auf der Kommandozeile
+
+						1. erstelle ein neues Verzeichnis und wechsel dort hinein
+						2. kopiere die Dateien `/etc/passwd` und `/etc/bash.bashrc`
+						   in das aktuelle Verzeichnis
+						3. benenne die Datei `passwd` um in `users`
+						4. lass den Inhalt von `users` ausgeben
+						5. lasse dir den Inhalt von `bash.bashrc` mit `less` anzeigen
+						6. wechsel zurück in das vorherige Verzeichnis und lösche das
+						   Verzeichnis, das du erstellt hast, wieder
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-basic-pipes">
 					<section data-markdown>## Ausgabeumleitung und Pipes</section>
 					<section data-markdown>
 						### Ausgabe in Datei umleiten/speichern
@@ -455,13 +610,39 @@
 						                ||----w |
 						                ||     ||
 						~~~
+
+						Siehe [`cat`](#cmd-cat), [`tac`](#cmd-tac), [`rev`](#cmd-rev),
+						[`sort`](#cmd-sort), [`grep`](#cmd-grep), [`wc`](#cmd-wc),
+						[`cowsay`](https://linux.die.net/man/1/cowsay)
+					</section>
+					<section id="exercise-basic-pipes" data-markdown>
+						### Praxisübungen - Pipes Grundlagen
+
+						1. erstelle eine neue Datei mit Inhalt `Hallo Welt`
+						2. lasse dir den Inhalt deiner Datei anzeigen
+							* lasse dir den Inhalt _rückwärts_ anzeigen
+							* lasse dir anzeige, wie viele Zeichen deine Datei enthält
+						3. füge die Zeile `Hallo, &lt;dein Name&gt;` an die Datei an
+						   und wiederhole 2.
+						4. sortiere die Datei zeichenweise umgekehrt und lasse das Ergebnis
+						   wieder in der richtigen Zeichenreihenfolge ausgeben
 					</section>
 				</section>
 
-				<section data-markdown>## Fortgeschrittene Themen</section>
-
-				<section>
+				<section id="sec-keys">
 					<section data-markdown>## Tastenkombinationen für Power-User</section>
+					<section data-markdown>
+						### Übersicht der Tastenkombinationen
+
+						* [Die wichtigsten Tastenkombinationen](#keys-top)
+						* [Autovervollständigung](#keys-autocomplete)
+						* [laufende Kommandos steuern](#keys-sig)
+						* [nützliche Tastenkombinationen](#keys-misc)
+						* [Cursor bewegen](#keys-moving)
+						* [Eingaben löschen](#keys-deleting)
+						* [Eingabe bearbeiten](#keys-editting)
+						* [durch die History navigieren](#keys-history)
+					</section>
 					<section data-markdown>
 						### Anmerkungen
 
@@ -473,37 +654,45 @@
 						* die Funktionsfähigkeit der Tastenkombinationen kann auch
 						  vom verwendeten Terminal abhängen
 					</section>
-					<section data-markdown>
-						<script type="text/template">
-							### Autovervollständigung
+					<section id="keys-top" data-markdown>
+						### Die wichtigsten Tastenkombinationen
 
-							* `Tab`: Eingabe soweit möglich vervollständigen
-							* `Tab` `Tab`: mögliche Vervollständigungen _anzeigen_
-
-							---
-
-							Die Autovervollständigung mit `Tab` ist mit die wichtigste
-							Angewohnheit, um auf der Shell effizient zu arbeiten!
-							<!-- .element: class="fragment grow" -->
-						</script>
+						* `Tab`: Eingabe soweit möglich vervollständigen
+						* `C-c`: aktuellen Befehl abbrechen / [`SIGINT`](https://de.wikipedia.org/wiki/Signal_(Unix)) senden
+						* `C-r`: History rückwärts durchsuchen
+						* `C-w`: **W**ort vor Cursor löschen
+						* `C-d`: _interaktive_ Eingabe beenden / _end-of-file_ senden
+						  (z.B. mit `cat`)
+						* `C-l`: _c**l**ear screen_ - Seiteninhalt leeren
+						* `C-a`: an den **A**nfang der Eingabe springen
+						* `C-e`: an das **E**nde der Eingabe springen
 					</section>
-					<section data-markdown>
+					<section id="keys-autocomplete" data-markdown>
+						### Autovervollständigung
+
+						* `Tab`: Eingabe soweit möglich vervollständigen
+						* `Tab` `Tab`: mögliche Vervollständigungen _anzeigen_
+
+						Die Autovervollständigung mit `Tab` ist mit die wichtigste
+						Angewohnheit, um auf der Shell effizient zu arbeiten!
+					</section>
+					<section id="keys-sig" data-markdown>
 						### laufende Kommandos steuern
 
-						* `C-c`: aktuellen Befehl abbrechen / `SIGINT` senden
+						* `C-c`: aktuellen Befehl abbrechen / [`SIGINT`](https://de.wikipedia.org/wiki/Signal_(Unix)) senden
 						* `C-z`: aktuellen [_Job_](#suspend-job) pausieren
 					</section>
-					<section data-markdown>
+					<section id="keys-misc" data-markdown>
 						### nützliche Tastenkombinationen
 
 						* `C-l`: _c**l**ear screen_ - Seiteninhalt leeren
 						* `C-d`: _interaktive_ Eingabe beenden / _end-of-file_ senden
 						  (z.B. mit `cat`)
-						* `C-x C-e`: `$EDITOR` starten, um Befehl zu bearbeiten
-						  und Ergebnis auszuführen
+						* `C-x C-e`: [`$EDITOR`](#env-overview) starten, um Befehl zu
+						  bearbeiten und Ergebnis auszuführen
 						* `M-#`: aktuelle Eingabe als Kommentar ausführen
 					</section>
-					<section data-markdown>
+					<section id="keys-moving" data-markdown>
 						### Cursor bewegen
 
 						* `C-a`: an den **A**nfang der Eingabe springen
@@ -513,7 +702,7 @@
 						* `M-f`: ein _Wort_ weiter (`Strg` + Pfeil rechts)
 						* `M-b`: ein _Wort_ zurück (`Strg` + Pfeil links)
 					</section>
-					<section data-markdown>
+					<section id="keys-deleting" data-markdown>
 						### Eingaben löschen
 
 						* `C-w`: **W**ort vor Cursor löschen
@@ -522,7 +711,7 @@
 						* `C-u`: alles _vor_ dem Cursor löschen
 						* `C-y`: zuletzt Gelöschtes einfügen (_**y**ank_)
 					</section>
-					<section data-markdown>
+					<section id="keys-editting" data-markdown>
 						### Eingabe bearbeiten
 
 						* `C-_`, `C-x C-u`: Änderungen rückgängig machen
@@ -534,7 +723,7 @@
 						* `M-l`: bis Wortende in _**L**owercase_ umwandeln
 						* `M-c`: folgendes Wort kapitalisieren
 					</section>
-					<section data-markdown>
+					<section id="keys-history" data-markdown>
 						### durch die History navigieren
 
 						* `C-r`: History rückwärts durchsuchen
@@ -547,9 +736,20 @@
 						* `M->`: ans Ende der History springen
 						* `M-.`, `M-_`: letztes Argument des letzten Befehls einfügen
 					</section>
+					<section id="exercise-keys" data-markdown>
+						### Praxisübungen - Tastenkombinationen
+
+						* durchsuche die History nach dem _vorletzten_ Vorkommen von `ls`
+						* gib `ls workshops/Linux/index.html` mit weniger als
+						  10 Tastendrücken ein!
+						* starte das Kommando [`sleep 100`](#cmd-sleep) und beende es vor
+						  Ablauf der angegebenen Zeit
+						* führe das Kommando `cat` aus und beende die Eingabe, ohne den
+						  Prozess abzubrechen
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-vars">
 					<section data-markdown>## Variablen</section>
 					<section data-markdown>
 						### einfache Variablen
@@ -579,7 +779,7 @@
 							$ file="Hello World.txt"
 
 							## Variablen in `""` werden ersetzt und das Ergebnis
-							##  als *ein* String an das Kommando übergeben:
+							## als *ein* String an das Kommando übergeben:
 							$ ls -l "$file"
 							-rw-r--r-- 1 alice alice 0 Oct  2 13:52 'Hello World.txt'
 
@@ -689,24 +889,24 @@
 						$ env # alle gesetzten Umgebungsvariablen ausgeben
 						~~~
 
-						_Umgebungsvariablen_ (Environment variables) vom OS an gestartete
-						Programme vererbt und können das Verhalten von Programmen zu
+						_Umgebungsvariablen_ (Environment variables) werden vom OS an
+						gestartete Programme vererbt und können das Verhalten von Programmen
 						beeinflussen.
 
 						Sie werden meist in Großbuchstaben benannt.
 					</section>
-					<section data-markdown>
+					<section id="env-overview" data-markdown>
 						### einige wichtige Umgebungsvariablen
 
-						* `HOME`: Home-Verzeichnis des Benutzers (siehe `~`)
-						* `HOSTNAME`: Hostname des Rechners
-						* `PWD`: aktuelles Arbeitsverzeichnis
-						* `OLDPWD`: verheriges Arbeitsverzeichnis
-						* `LANG`: bevorzugte Systemsprache
-						* `EDITOR`: absoluter Pfad zum bevorzugten Texteditor
+						* `$HOME`: Home-Verzeichnis des Benutzers (siehe [`~`](#path-basics))
+						* `$HOSTNAME`: Hostname des Rechners
+						* `$PWD`: aktuelles Arbeitsverzeichnis
+						* `$OLDPWD`: verheriges Arbeitsverzeichnis
+						* `$LANG`: bevorzugte Systemsprache
+						* `$EDITOR`: Befehl für bevorzugten Texteditor
 						  (`vim`, `nano`, `emacs`, ...)
 					</section>
-					<section data-markdown>
+					<section id="env-PATH" data-markdown>
 						### [`$PATH`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-PATH)
 
 						Gibt durch `:` getrennt an, in welchen Verzeichnissen ausführbare
@@ -737,7 +937,7 @@
 						Verzeichnissen wechseln kann.
 
 						~~~console
-						$ mkdir -p projects/workshops projects/admin-scripts
+						$ mkdir -p ~/projects/workshops ~/projects/admin-scripts
 						$ cd workshops
 						bash: cd: workshops: No such file or directory
 
@@ -753,9 +953,22 @@
 						/home/alice/projects
 						~~~
 					</section>
+					<section id="exercise-vars" data-markdown>
+						### Praxisübungen - Variablen
+
+						* lasse dir den aktuellen Wert von `$PATH` ausgeben
+						* erstelle `$users_file` mit Wert `/etc/passwd`
+						* erstelle eine Variable `$users_count` mit der Anzahl der Zeilen in `/etc/passwd`
+							* verwende dabei die Variable `$users_file`
+							* Hinweis: [`wc`](#cmd-wc)
+						* gib nur das erste Element von `$PATH` aus
+						* gib `$PATH` aus, mit allen _bin_ ersetzt durch _sein_
+						* erstelle `$base` mit dem Namen des aktuellen Verzeichnisses
+							* Hinweis: lösbar mit **und** ohne [`basename`](#cmd-basename)
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-composition">
 					<section data-markdown>## Komposition von Kommandos</section>
 					<section data-markdown>
 						### einfache Verkettung mehrerer Befehle
@@ -816,7 +1029,7 @@
 						~~~console
 						### Kommandos als Gruppe ausführen:
 						## - Umleitungen von Input/Output gelten für ganze Gruppe
-						## - Gesamt-Exit-Status ist das des letzten Kommandos
+						## - Gesamt-Exit-Status ist der des letzten Kommandos
 
 						## Als Block:
 						## Leerzeichen vor/nach sowie letztes `;` sind Pflicht
@@ -828,7 +1041,8 @@
 						## in einer Subshell:
 						## Kommandos werden in eigener Subshell ausgeführt
 						## -> geänderte Variablen beeinflussen nicht Haupt-Shell
-						$ (HELLO="Hello"; echo $HELLO; echo World)
+						$ (HELLO="Hello"; echo $HELLO; echo World) > hello.txt
+						$ cat hello.txt
 						Hello
 						World
 						$ echo $HELLO # leer
@@ -836,10 +1050,21 @@
 
 						Siehe auch [Doku](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Command-Grouping)
 					</section>
+					<section id="exercise-composition" data-markdown>
+						### Praxisübungen - Komposition
+
+						* erstelle das Verzeichnis `test` und wechsel hinein - mit einem einzigen Befehl
+						* führe einen Befehl aus, dessen Exit Status _kein Erfolg_ signalisiert
+						* lasse dir den Exit Status des letzten Befehls anzeigen
+						* erstelle eine neue Datei `foo`, benenne sie um zu `bar` und lösche sie wieder
+							* alles mit nur einer Befehlszeile
+							* jede Teilaktion nur nach Erfolg der vorhiergen
+							* wenn eine der Aktionen fehlschlägt, gib eine eigene Fehlermeldung aus
+					</section>
 				</section>
 
 
-				<section>
+				<section id="sec-pipes">
 					<section data-markdown>## Fortgeschrittene Pipes</section>
 					<section data-markdown>
 						### Beobachtungen mit Pipes
@@ -887,10 +1112,10 @@
 						### Hintergrund: Syntax von Pipes
 
 						Ohne weitere Angaben leiten die Pipes mit
-						* `<`: Inhalt der Datei mit _stdin_ des Kommandos verknüpfen
-						* `>`: _stdout_ in angegebene Datei schreiben
+						* `<`: den Inhalt der Datei in _stdin_ des Kommandos
+						* `>`: _stdout_ in angegebene Datei
 						* `>>`: wie `>` aber Ausgabe an Datei anfügen
-						* `|`: _stdout_ des ersten Kommandos mit _stdin_ des zweiten verbinden
+						* `|`: _stdout_ des ersten Kommandos an _stdin_ des zweiten
 					</section>
 					<section data-markdown>
 						### Pipes mit File Descriptoren
@@ -915,6 +1140,7 @@
 						## "stderr in die Pipe von stdout, *dann* stdout in Datei"
 						$ cat foobar 2>&1 > output.txt
 						cat: foobar: No such file or directory
+
 						$ cat foobar 2>&1 > output.txt | rev
 						yrotcerid ro elif hcus oN :raboof :tac
 						~~~
@@ -938,7 +1164,7 @@
 						## und von der "Datei" stdin ('-')
 						~~~
 					</section>
-					<section data-markdown>
+					<section id="here-documents" data-markdown>
 						<script type="text/template">
 							### _Here Documents_
 
@@ -1012,9 +1238,21 @@
 						## was in diese geschrieben wird, dient als stdin für `cmd`
 						~~~
 					</section>
+					<section id="exercise-pipes" data-markdown>
+						### Praxisübungen - Pipes
+
+						* lasse dir den Namen aller Nutzer ausgeben (erste Spalte in
+						  `/etc/passwd`), die `/bin/bash` als Shell verwenden (letzte Spalte)
+							* Hinweis: [`grep`](#cmd-grep), [`cut`](#cmd-cut)
+							* Bonus: lasse das Ergebnis mit [`less`](#cmd-less) anzeigen
+						* rufe `ls -l` für eine nicht-existierende Datei auf und lasse die
+						  Fehlermeldung davon rückwärts ausgeben
+							* füge eine existierende Datei zum Aufruf hinzu
+							* die Ausgabe der zweiten Datei soll verworfen werden
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-jobs">
 					<section data-markdown>## Job Control</section>
 					<section data-markdown>
 						### Komandos im Hintergrund ausführen
@@ -1038,7 +1276,8 @@
 						[1]+  Stopped                 sleep 100
 						~~~
 
-						Hintergrund: mit `C-z` wird dem Vordergrundprozess ein `SIGSTOP`
+						Hintergrund: mit `C-z` wird dem Vordergrundprozess ein
+						[`SIGSTOP`](https://de.wikipedia.org/wiki/Signal_(Unix))
 						gesendet, wodurch der Prozess angehalten wird.
 					</section>
 					<section data-markdown>
@@ -1086,18 +1325,29 @@
 						## wird die Shell beendet, werden auch alle noch laufenden
 						## Hintergrund-Jobs beendet (`SIGHUP` wird gesendet).
 						## soll ein Job auch ohne Shell weiterlaufen, muss er von
-						## der Job-Tabelle enternt werden:
+						## der Job-Tabelle entfernt werden:
 						$ sleep 100 &
 						[1] 475
 						$ disown
 						$ exit # Shell beenden, `sleep` Job läuft trotzdem weiter
 						~~~
 					</section>
+					<section id="exercise-jobs" data-markdown>
+						### Praxisübungen - Job Control
+
+						* starte `sleep 1000` und breche es nach 5s ab
+						* starte einen Befehl _im Hintergrund_, der dir nach 30s die
+						  Nachricht _Fertig!_ ausgibt (siehe [_Komposition_](#sec-composition))
+						* starte den vorherigen Befehl 3 mal, bevor der erste beendet;
+						  setze den ersten dann im Vordergrund fort
+						* starte `sleep 1000` im Vordergrund und verschiebe ihn
+						  danach in den Hintergrund
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-pattern-matching">
 					<section data-markdown>## Pattern Matching</section>
-					<section data-markdown>
+					<section class="text-left" data-markdown>
 						### einfaches Pattern Matching
 
 						Gewisse Platzhalter in der Kommandozeile werden von der Shell durch
@@ -1118,7 +1368,7 @@
 
 						~~~sh
 						# '*' trifft auf alls zu (0, 1 oder mehr belibige Zeichen)
-						ls *     # listet alle Dateien/Verzeinisse im aktuellen
+						ls *     # listet alle Dateien/Verzeichnisse im aktuellen
 						ls *.txt # listet alles, was mit '.txt' endet
 						ls */    # listet alle Verzeichnisse auf
 						ls D*    # listet alle Verzeinisse, die mit 'D' starten
@@ -1135,15 +1385,16 @@
 						ls ??    # listet alle Pfade mit genau zwei Zeichen
 
 						# in `[]` können mehrere mögliche Zeichen angeben werden
-						ls [Dd]esktop # trifft auf 'desktop' und 'Desktop' zu
-						ls [A-Z0-9]*  # Pfade beginnend mit Großbuchstabe oder Zahl
-						ls [:digit:]* # Pfade beginnend mit einer Ziffer
+						ls [Dd]esktop   # trifft auf 'desktop' und 'Desktop' zu
+						ls [A-Z0-9]*    # Pfade beginnend mit Großbuchstabe / Zahl
+						ls [[:digit:]]* # Pfade beginnend mit einer Ziffer
 						~~~
 					</section>
 					<section data-markdown>
 						### erweitertes Pattern Matching
 
-						Zusätzlich mit Option `extglob` aktiviert (mit `shopt -s extglob`):
+						Zusätzlich mit Option `extglob` aktiviert (mit
+						[`shopt -s extglob`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-shopt)):
 
 						* `?(pattern)`: ein optionales Vorkommen
 						* `*(pattern)`: keins oder mehr Vorkommen
@@ -1163,7 +1414,7 @@
 						### Pattern Expansion
 
 						~~~console
-						## in `{}` können noch Teil-Patternsangegeben werden:
+						## in `{}` können noch Teil-Patterns angegeben werden,
 						## durch Komma getrennt:
 						$ echo hello.{sh,txt}
 						hello.sh hello.txt
@@ -1184,9 +1435,21 @@
 						file1 file3 file5 file7 file9
 						~~~
 					</section>
+					<section id="exercise-pattern-matching" data-markdown>
+						### Praxisübungen - Shell-Patterns
+
+						* gib alle Dateien mit Dateiendung 'md' in den
+						  aktuellen Unterverzeichnissen aus
+						* lasse dir _rekursiv_ alle HTML-Dateien im Verzeichnis
+						  `workshops` mit `echo` ausgeben
+						* gib alle Kombinationen von `a`, `b` und `c` mit den
+						  Zahlen 1-10 aus (`a1`, `a1`, ... `b1` ... `c10`)
+						* lasse dir im Verzeichnis `jingle` den String `*.*`
+						  (genau so) ausgeben
+					</section>
 				</section>
 
-				<section>
+				<section id="sec-scripting">
 					<section data-markdown>## Shell Skripte</section>
 					<section data-markdown>
 						<script type="text/template">
@@ -1198,6 +1461,7 @@
 
 							$ echo 'echo "Hello World!"' > script.sh
 							$ bash ./script.sh
+							Hello World!
 
 							$ cat > script.sh <<EOT
 							> #!/bin/bash
@@ -1210,12 +1474,12 @@
 							~~~
 						</script>
 					</section>
-					<section data-markdown>
+					<section class="text-left" data-markdown>
 						### Hintergrund: ausführbare Skripte
 
 						Um unter Unix-Systemen Skripte wie normale (Binär-)Programme
 						auszuführen, kann der sog. [_Shebang_](https://de.wikipedia.org/wiki/Shebang)
-						verwendet werden:
+						`#!` verwendet werden:
 
 						Die erste Zeile `#!/bin/bash` gibt an, dass `/bin/bash` als
 						Interpreter für das Skript verwendet werden soll.
@@ -1232,7 +1496,7 @@
 						echo "Text für stdout"
 						echo "Text für stderr" >&2
 
-						exit 1 # Fehler durch nicht-0 Exit status signalisieren
+						exit 1 # Fehler durch nicht-0 Exit Status signalisieren
 
 						echo "Diese Zeile wird nie ausgeführt"
 						~~~
@@ -1244,7 +1508,7 @@
 						#!/bin/bash
 
 						# ist der Exit Status der Bedingung 0 wird der `if`-Zweig
-						# ausgeführt, sonst der `else`-ZWeig (falls vorhanden)
+						# ausgeführt, sonst der `else`-Zweig (falls vorhanden)
 						if [ -f /tmp/foo ]
 						then
 							echo "Datei /tmp/foo existiert"
@@ -1275,16 +1539,16 @@
 						[ -d path ] # Verzeichnis `path` existiert
 						[ -x file ] # Datei `file` ist ausführbar
 
-						[ -z "$var" ] # `$var` ist leer (zero)
+						[ "$var" ]    # `$var` ist nicht leer
 						[ -n "$var" ] # `$var` ist nicht leer
-						[ "$var" ] # `$var` ist nicht leer
+						[ -z "$var" ] # `$var` ist leer (zero)
 						[ "$string1" == "$string2" ] # Beide Strings sind gleich
 						[ "$string1" != "$string2" ] # Strings sind ungleich
 						[ "$string1"  < "$string2" ] # $string1 "kleiner" $string2
 
 						[ "$arg1" -eq "$arg2" ] # $arg1 gleich $arg2 ('equal')
 						[ "$arg1" -ne "$arg2" ] # $arg1 ungleich $arg2 ('not equal')
-						[ "$arg1" -lt "$arg2" ] # $arg1 kleiner $arg2 ('less then')
+						[ "$arg1" -lt "$arg2" ] # $arg1 kleiner $arg2 ('less than')
 						[ "$arg1" -le "$arg2" ] # $arg1 kleiner/gleich $arg2
 						[ "$arg1" -gt "$arg2" ] # $arg1 größer $arg2 ('greater')
 						[ "$arg1" -ge "$arg2" ] # $arg1 größer/gleich $arg2
@@ -1341,7 +1605,7 @@
 
 						Siehe [`help until`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-until)
 					</section>
-					<section data-markdown>
+					<section id="cntrl-for-in" data-markdown>
 						### Kontrollstrukturen - `for ... in`
 
 						~~~sh
@@ -1362,6 +1626,31 @@
 						~~~
 
 						Siehe [`help for`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-for)
+					</section>
+					<section data-markdown>
+						### Kontrollstrukturen - `break` und `continue`
+
+						~~~console
+						## `break` beendet das Ausführen der Schleife
+						$ while true; do
+						>   echo "Hello World"
+						>   break
+						> done
+						Hello World
+						## Schleife nach erstem Durchlauf beendet
+
+						## `continue` beendet aktuellen Durchlauf/geht zum nächsten
+						$ for i in 1 2 3 4; do
+						>   if [ $i -eq 2 ]; then
+						>     continue
+						>   fi
+						>   echo $i
+						> done
+						1
+						3
+						4
+						## Ausgabe von '2' übersprungen
+						~~~
 					</section>
 					<section data-markdown>
 						### Kontrollstrukturen - `case`
@@ -1480,7 +1769,8 @@
 						bar
 						~~~
 
-						Siehe [`help shift`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-shift)
+						Siehe [`help shift`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-shift),
+						für fortgeschrittene Verarbeitung: [`help getopts`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-getopts)
 					</section>
 					<section data-markdown>
 						### Funktionen
@@ -1501,7 +1791,43 @@
 						GREETING=Hello
 						hello World # "Hello, World!"
 						echo $? # "123" -> Misserfolg
+
+						## Schlüsselwort `function` ist optional
+						hello() {
+							echo "Hello World"
+						}
+						hello # "Hello, World!"
 						~~~
+					</section>
+					<section id="cmd-echo" data-markdown>
+						### Text ausgeben - `echo`
+
+						~~~console
+						$ echo Hello World
+						Hello World
+
+						## alle Argumente mit Leerzeichen getrennt ausgeben:
+						## als einzelne Argumente => Leerzeichen gehen verloren
+						$ echo Hello   World
+						Hello World
+						## als *ein* String => Leerzeichen bleiben erhalten
+						$ echo "Hello   World"
+						Hello   World
+
+						## `-n` => automatisch angehängten Zeilenumbruch entfernen
+						$ echo Hello; echo World
+						Hello
+						World
+						$ echo -n Hello; echo World
+						HelloWorld
+
+						## `-e` => Escape-Sequenzen interpretieren
+						$ echo -e "1\t2\n10\t20"
+						1       2
+						10      20
+						~~~
+
+						Siehe [`help echo`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-echo)
 					</section>
 					<section data-markdown>
 						### Input einlesen - `read`
@@ -1588,10 +1914,25 @@
 
 						Siehe [`help set`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin).
 					</section>
+					<section id="exercise-scripting" data-markdown>
+						### Praxisübung - Shell-Skripte
+
+						1. Erstelle ein Skript, das für ein angebenes Verzeichnis
+						   die Anzahl der enthaltenen Elemente ausgibt
+						2. Ohne Argumente soll eine Fehlermeldung auf _stderr_ ausgegeben
+						   werden sowie eine Anleitung mit Beispielausgabe
+						   (siehe [_Here Documents_](#here-documents))
+						3. Erlaube den Aufruf mit beliebig vielen Argumenten und gib
+						   jeweils den [`basename`](#cmd-basename) mit aus
+						4. Gib eine Fehlermeldung aus, wenn ein Pfad eine Datei ist,
+						   und eine andere, für nicht-existente Pfade
+						5. Bei `-` soll der Pfad interaktiv eingegeben werden
+						6. Implementiere 1. und 2. als Funktion
+					</section>
 				</section>
 
-				<section>
-					<section data-markdown>### Konfiguration der Shell</section>
+				<section id="sec-config">
+					<section data-markdown>## Konfiguration der Shell</section>
 					<section data-markdown>
 						### Konfigurationsdateien
 
@@ -1732,6 +2073,7 @@
 						* `\$`: `#` für root-User, `$` sonst
 						* `\n`: Zeilenumbruch
 						* `\e`: Escapezeichen
+						* `\[` und `\]`: einschließen von nicht-sichtbaren bzw. Steuerzeichen
 
 						Für mehr, siehe [_Controlling the Prompt_](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Controlling-the-Prompt)
 					</section>
@@ -1757,10 +2099,15 @@
 						~~~sh
 						# Beispiele:
 						# Benutzername grün, Verzeichnis blau und fett, danach Reset
-						PS1='\e[32m\u \e[1;34m\w\e[0m $ '
+						PS1='\[\e[32m\]\u \[\e[1;34m\]\w\[\e[0m\] $ '
 
 						# Erfolgsindikator grün/rot färben
-						PS1='$([ $? = 0 ] && echo "\e[1;32m✓" || echo "\e[1;31m✗")\e[0m \w $ '
+						PS1='$([ $? = 0 ] && echo "\[\e[1;32m\]✓" || echo "\[\e[1;31m\]✗")\[\e[0m\] \w $ '
+
+						# Die nicht-sichtbaren Escape-Sequenzen der Farben müssen
+						# mit \[ und \] eingeschlossen werden, damit sie nicht zur
+						# Länge des Prompts mitgezählt werden. Sonst kommt es bei
+						# langen Prompts/Eingaben zu Darstellungsfehlern.
 						~~~
 					</section>
 					<section data-markdown>
@@ -1770,83 +2117,1123 @@
 						* [Prompt mit Infos zum `git`-Repo](https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh)
 						* viele [Beispiele online zu finden](https://github.com/alebcay/awesome-shell#customization)
 					</section>
+					<section id="exercise-config" data-markdown>
+						### Praxisübungen - Shell-Konfiguration und Anpassung
+
+						* erstelle Aliasse, sodass [`ls`](#cmd-ls) und [`grep`](#cmd-grep)
+						  _immer_ Farben verwenden (`--color`)
+						* in `.bashrc`:
+							* füge `~/bin` zu `$PATH` hinzu, _wenn_ es existiert
+							* füge die erstellten Aliasse hinzu
+							* erstelle eine Funktion/Alias, um ein Verzeichnis zu
+							   erstellen und direkt hineinzuwechseln
+						* füge die Uhrzeit zum Shell-Prompt hinzu
+						* färbe den (Base-)Namen des Arbeitsverzeichnisses im Prompt blau
+					</section>
+				</section>
+
+				<section id="cmds-overview" data-markdown>
+					## Wichtige Befehle im Detail
+
+					* [Navigieren und Dateien anzeigen](#nav-cmds)
+					* [Dateien erstellen und ändern](#file-cmds)
+					* [Streams manipulieren](#pipe-cmds)
+					* [Automatisieren in Skripten](#scripting-cmds)
+					* [Dateien archivieren und runterladen](#archive-cmds)
 				</section>
 
 				<section>
-					<section data-markdown>## Wichtige Befehle im Detail</section>
-					<section data-markdown>
-						### Wichtige Unix-Tools
+					<section id="nav-cmds" data-markdown>
+						## Navigieren und Dateien anzeigen
 
-						~~~
-						* awk
-						* basename
-						* cat
-						* cd
-						* comm
-						* cp
-						* cut
-						* date
-						* diff / patch
-						* dirname
-						* du
-						* file
-						* find
-						* getopts
-						* grep
-						* gzip
-						* head
-						* less
-						* ln
-						* ls
-						* md5sum / sha1sum
-						* mkdir
-						* mktemp
-						* more
-						* mv
-						* pwd
-						* rename
-						* rev
-						* rm
-						* sed
-						* sleep
-						* sort
-						* tac
-						* tail
-						* tar
-						* touch
-						* tr
-						* wc
-						* wget / curl
-						* which
-						~~~
+						* [`cd`](#cmd-cd) - Arbeitsverzeichnis wechseln
+						* [`pwd`](#cmd-pwd) - aktuelles Arbeitsverzeichnis ausgeben
+						* [`ls`](#cmd-ls) - Verzeichnisinhalte auflisten
+						* [`cat`](#cmd-cat) - Inhalte einfach ausgeben
+						* [`less`](#cmd-less) - Inhalte interaktiv anzeigen
 					</section>
-					<section data-markdown>
-						### Bash Bult-ins
+					<section id="cmd-cd" data-markdown>
+						### `cd` - Arbeitsverzeichnis wechseln
 
+						~~~console
+						$ cd /tmp/ # Wechseln zu /tmp
+						$ cd ~ # in Home-Verzeichnis wechseln
+						$ cd Desktop # in `Desktop` im aktuellen Verzeichnis wechseln
+						$ cd .. # eine Ebene nach oben gehen
+
+						$ cd - # zurück in vorheriges Verzeichnis wechseln
+						/home/alice/Desktop
+
+						$ cd # in Home-Verzeichnis wechseln
 						~~~
-						* complete
-						* disown
-						* echo
-						* eval
-						* exec
-						* fg / bg
-						* history
-						* kill
-						* printf
-						* read
-						* shift
-						* source
-						* test
-						* trap
-						* type
-						* unalias
-						* unset
-						* wait
+
+						Details siehe [`help cd`](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#index-cd)
+					</section>
+					<section id="cmd-pwd" data-markdown>
+						### `pwd` - aktuelles Arbeitsverzeichnis ausgeben
+
+						~~~console
+						$ pwd
+						/home/alice
+
+						## `-P` => Symlinks im Pfad auflösen
+						$ ln -s ~ /tmp/home
+						$ cd /tmp/home
+						$ pwd
+						/tmp/home
+						$ pwd -P
+						/home/alice
 						~~~
+
+						Details siehe [`man pwd`](https://man7.org/linux/man-pages/man1/pwd.1.html)
+					</section>
+					<section id="cmd-ls" data-markdown>
+						### `ls` - Verzeichnisinhalte auflisten
+
+						~~~console
+						## aktuelles Verzeichnis anzeigen
+						$ ls
+						Desktop  bin  listing.txt
+
+						## bestimmte Verzeichnisse anzeigen
+						$ ls bin/
+						myscript.sh  test.sh
+
+						## `-l` => mehr Details anzeigen
+						$ ls -l
+						total 4
+						drwxr-xr-x 1 alice alice 30 Sep 29 16:54 Desktop
+						drwxr-xr-x 1 alice alice  6 Sep 29 16:54 bin
+						-rw-r--r-- 1 alice alice 24 Sep 29 16:53 listing.txt
+
+						## `-a` => versteckte Dateien anzeigen
+						$ ls -a
+						.  ..  .bashrc  .bash_history  Desktop  bin  listing.txt
+
+						## `--color` => farbige Ausgabe
+						## `-h` => Menschenlesbare Einheiten verwenden
+
+						## `-1` => ein Eintrag pro Zeile
+						$ ls
+						Desktop  bin  listing.txt
+						$ ls -1
+						Desktop
+						bin
+						lsiting.txt
+						## automatisch bei Pipes:
+						$ ls | cat
+						Desktop
+						bin
+						lsiting.txt
+
+						## `-d` => Verzeichnis selbst statt Inhalt anzeigen
+						$ ls bin/
+						myscript.sh  test.sh
+						$ ls -l -d bin/
+						drwxr-xr-x 1 alice alice  6 Sep 29 16:54 bin
+						~~~
+
+						Details siehe [`man ls`](https://man7.org/linux/man-pages/man1/ls.1.html)
+					</section>
+					<section id="cmd-cat" data-markdown>
+						### `cat` - Inhalte einfach ausgeben
+
+						~~~console
+						## Standardwerkzeug, um (Datei-)Inhalte unverändert
+						## auszugeben oder weiter zu pipen
+						$ cat Readme # Inhalt von Datei 'Readme' ausgeben
+						$ cat Readme License # 'Readme' und 'License' ausgeben
+
+						## '-' als Dateiname bezeichnet stdin
+						$ cat Readme - License # 'Readme', stdin und 'License' ausgeben
+
+						## ohne Argumente wird stdin eingelesen und ausgegeben
+						$ cat < Readme # 'Readme' über stdin einlesen und ausgeben
+
+						$ echo "Hello World!" | cat
+						Hello World!
+
+						## `-n` => Ausgabezeilen nummerieren
+						$ echo -e "Hello\n\n\n\nWorld" | cat -n
+						1  Hello
+						2
+						3
+						4
+						5  World
+
+						## `-s` => mehrere Leerzeilen nacheinander zusammenfassen
+						$ echo -e "Hello\n\n\n\nWorld" | cat -s
+						Hello
+
+						World
+						~~~
+
+						Details siehe [`man cat`](https://man7.org/linux/man-pages/man1/cat.1.html)
+					</section>
+					<section id="cmd-less" data-markdown>
+						### `less` - Inhalte interaktiv anzeigen
+
+						~~~console
+						## Dateiinhalte / Ausgaben interaktiv anzeigen
+						## => less dient als "Pager"
+						$ less /var/log/messages
+						$ cat /var/log/messages | less
+
+						### Wichtige Tastenkombinationen in less:
+						## `h` => Hilfe/Tastenkombinationen anzeigen
+						## `q` => beenden
+
+						### Navigieren
+						## Pfeiltasten => zeilenweise scrollen
+						## `f` / `b` => seitenweise vorwärts/rückwärts scrollen
+						## `d` / `u` => halbe-seitenweise runter/rauf scrollen
+						## `gg` an den Anfang springen
+						## `G` an das Ende springen
+
+						### Suchen und Filtern
+						## `/` => Vorwärtssuche einleiten
+						## `?` => Rückwärtsssuche einleiten
+						## z.B. '/Hello&lt;Enter&gt;' => Suchen nach "Hello"
+
+						## Sucheingabe wird als Regular Expression gelesen:
+						## z.B. '?Hello|World&lt;Enter&gt;'
+						## => Rückwärtssuche nach "Hello" *oder* "World"
+
+						## '/&lt;Pfeil hoch&gt;' => vorherige Suche bearbeiten
+						## `n` => zum nächsten Treffer springen
+						## `N` => zum vorherigen Treffer springen
+
+						## '&amp;&lt;RegEx&gt;' => Zeilen nach RegEx filtern
+
+						### Kommandozeilenoptionen
+						## `-` => Kommandozeilenoption aktivieren
+						## z.B. '-S&lt;Enter&gt;' ist äquivalent zu Start mit
+						$ less -S
+						## `-i` => "Ignore Case" bei Suche de-/aktivieren
+						## `-S` => lange Zeilen umbrechen/abschneiden
+
+						### Dateien öffnen
+						## `:n` / `:p` => nächste / vorherige Datei anzeigen:
+						$ less /etc/passwd /etc/group
+						## ':n&lt;Enter&gt;' zu /etc/group wechseln
+						## ':p&lt;Enter&gt;' zurück zu /etc/passwd
+						~~~
+
+						Details siehe [`man less`](https://man7.org/linux/man-pages/man1/less.1.html).
+
+						Siehe auch: [`man more`](https://man7.org/linux/man-pages/man1/more.1.html).
 					</section>
 				</section>
 
-				<section data-markdown>### Praxisübungen</section>
+				<section>
+					<section id="file-cmds" data-markdown>
+						## Dateien erstellen und ändern
+
+						* [`touch`](#cmd-touch) - Zeitstempel ändern/Dateien erstellen
+						* [`mkdir`](#cmd-mkdir) - Verzeichnisse erstellen
+						* [`cp`](#cmd-cp) - Dateien kopieren
+						* [`rm`](#cmd-rm) - Dateien löschen
+						* [`mv`](#cmd-mv) - Dateien verschieben/umbenennen
+						* [`rename`](#cmd-rename) - Dateien mit Muster umbenennen
+						* [`ln`](#cmd-ln) - Anlegen von Verknüpfungen
+					</section>
+					<section id="cmd-touch" data-markdown>
+						### `touch` - Zeitstempel ändern/Dateien erstellen
+
+						~~~console
+						## Zeitstempel einer Datei aktualisieren
+						$ ls -l foo
+						-rw-r--r-- 1 alice alice 0 Sep 29 16:55 foo
+						$ touch foo
+						$ ls -l foo
+						-rw-r--r-- 1 alice alice 0 Sep 29 16:59 foo
+
+						## existiert die Datei nicht, wird sie erstellt
+						$ ls -l bar
+						ls: cannot access 'bar': No such file or directory
+						$ touch bar
+						$ ls -l bar
+						-rw-r--r-- 1 alice alice 0 Sep 29 17:04 foo
+						~~~
+
+						Details siehe [`man touch`](https://man7.org/linux/man-pages/man1/touch.1.html)
+					</section>
+					<section id="cmd-mkdir" data-markdown>
+						### `mkdir` - Verzeichnisse erstellen
+
+						~~~console
+						## Verzeichnis 'projects' erstellen
+						$ mkdir projects
+
+						## `-p` => fehlende Elternverzeichnisse miterstellen
+						## /tmp/foo/ existiert nicht:
+						$ mkdir /tmp/foo/bar
+						mkdir: cannot create directory '/tmp/foo/bar': No such file or directory
+						$ mkdir -p /tmp/foo/bar # Erfolg
+
+						## `-m` / `--mode` => Berechtigungen setzen
+						$ mkdir -m 700 /tmp/test
+						$ ls -ld /tmp/test
+						drwx------ 2 alice alice  6 Sep 29 17:15 /tmp/test
+						~~~
+
+						Details siehe [`man mkdir`](https://man7.org/linux/man-pages/man1/mkdir.1.html)
+					</section>
+					<section id="cmd-cp" data-markdown>
+						### `cp` - Dateien kopieren
+
+						~~~console
+						## Kopie von `file1.txt` mit Namen `file2.txt` erstellen
+						$ cp file1.txt file2.txt
+
+						## `file1.txt` und `file2.txt` in `./Desktop/` kopieren
+						$ cp file1.txt file2.txt Desktop/
+
+						## -t => Zielordner explizit angeben
+						## erleichtert Arbeiten mit Wildcards:
+						## Dateien in 'examples' nach 'docs' kopieren
+						$ cp -t ./docs/ ./examples/*
+
+						## -d => symbolische Links als solche kopieren
+						## -R => Verzeichnis rekursiv kopieren
+						## --preserve=... => verschiedene Dateisystem-Attribute
+						##   erhalten (Berechtigungen, Besitzer etc.)
+						## -a / --archive => wie -dR --preserve=all
+						## Kopie des Verzeichnisses 'Desktop' erstellen
+						$ cp -a Desktop/ Desktop_backup
+						~~~
+
+						Details siehe [`man cp`](https://man7.org/linux/man-pages/man1/cp.1.html)
+					</section>
+					<section id="cmd-rm" data-markdown>
+						### `rm` - Dateien löschen
+
+						~~~console
+						## einzelne Dateien löschen
+						$ rm file1.txt file2.txt Desktop/file2.txt
+
+						## `-r` => rekursiv löschen
+						$ rm -r /tmp/sandbox/
+
+						## `-f` / `-force` => ohne interaktive Nachfrage löschen
+						## existiert die Datei nicht, kommt auch kein Fehler
+						$ rm /tmp/foo
+						rm: cannot remove '/tmp/foo': No such file or directory
+						$ rm -f /tmp/foo
+						~~~
+
+						Details siehe [`man rm`](https://man7.org/linux/man-pages/man1/rm.1.html)
+					</section>
+					<section id="cmd-mv" data-markdown>
+						### `mv` - Dateien verschieben/umbenennen
+
+						~~~console
+						## `file1.txt` zu `file2.txt` umbenennen
+						$ mv file1.txt file2.txt
+
+						## `file2.txt` in Verzeichnis `Desktop/` verschieben
+						$ mv file2.txt Desktop/
+
+						## `file2.txt` verschieben *und* umbenennen
+						$ mv Desktop/file2.txt /tmp/file3.txt
+
+						## `-t` => Zielverzeichnis angeben
+						$ mv -t Desktop/ file*.txt
+						~~~
+
+						Details siehe [`man mv`](https://man7.org/linux/man-pages/man1/mv.1.html)
+					</section>
+					<section id="cmd-rename" data-markdown>
+						### `rename` - Dateien mit Muster umbenennen
+
+						~~~console
+						## alle *.htm Dateien zu *.html umbenennen
+						$ rename .htm .html *.htm
+
+						## Dateiendung *.sh von allen Skripten entfernen
+						$ rename .sh "" ~/bin/*.sh
+						~~~
+
+						Details siehe [`man rename`](https://man7.org/linux/man-pages/man1/rename.1.html)
+					</section>
+					<section id="cmd-ln" data-markdown>
+						### `ln` - Anlegen von Verknüpfungen
+						Fast ausschließlich zum Anlegen von
+						[Symlinks](https://de.wikipedia.org/wiki/Symbolische_Verkn%C3%BCpfung)
+						verwendet.
+
+						~~~console
+						## `-s` => Symlink erstellen
+						## Symlink "/tmp/Desktop -> ~/Desktop" erstellen
+						$ ln -s ~/Desktop /tmp/
+
+						## Symlink "Alice -> ~/Desktop" in $PWD erstellen
+						$ ln -s ~/Desktop Alice
+
+						## einzelne Symlinks zu allen Dateien/Verzeichnissen
+						## in ~/Desktop in /tmp/ erstellen
+						$ ln -s ~/Dektop/* /tmp/
+
+						## `-t` => Zielverzeichnis angeben
+						$ ln -s -t /tmp/ ~/Dektop/*
+						~~~
+
+						Details siehe [`man ln`](https://man7.org/linux/man-pages/man1/ln.1.html)
+					</section>
+				</section>
+
+				<section>
+					<section id="pipe-cmds" data-markdown>
+						## Streams manipulieren
+
+						* [`grep`](#cmd-grep) - Zeilen mit Muster finden
+						* [`cut`](#cmd-cut) - Spalten einer Zeile ausgeben/entfernen
+						* [`head`](#cmd-head) - Anfang einer Datei/stdin ausgeben
+						* [`tail`](#cmd-tail) - nur letzte Zeilen ausgeben
+						* [`sort`](#cmd-sort) - Zeilen sortieren
+						* [`wc`](#cmd-wc) - Zeichen zählen
+						* [`sed`](#cmd-sed) - Text-Stream bearbeiten
+						* [`tee`](#cmd-tee) - Pipe-Stream in Dateien kopieren
+						* [`tr`](#cmd-tr) - Zeichen austauschen
+						* [`rev`](#cmd-rev) - Zeichenweise rückwärts ausgeben
+						* [`tac`](#cmd-tac) - Zeilenreihenfolge umkehren
+					</section>
+					<section id="cmd-grep" data-markdown>
+						### `grep` - Zeilen mit Muster finden
+
+						~~~console
+						$ cat /etc/passwd | grep bash # "bash" enthaltende Zeilen
+						$ grep bash /etc/passwd /etc/group # zwei Dateien durchsuchen
+
+						## Suchmuster sind reguläre Ausdrücke
+						$ grep 'root\|nobody' /etc/passwd # "root" oder "nobody"
+						$ grep '^root' /etc/passwd # Zeile beginnt mit "root"
+						$ grep 'sh$' /etc/passwd # Zeile endet mit "sh"
+
+						## `-r` => rekursiv suchen
+						## in allen Dateien in /etc/ nach "alice" suchen
+						$ grep -r alice /etc/
+
+						## `-i` => case-insensitive suchen
+						## `-v` => Zeilen matchen, ohne Treffer für Muster
+						## `--color` => Treffer farblich hervorheben
+
+						## `-H` => Dateiname bei jeder Zeile mit ausgeben
+						$ grep -H root /etc/passwd
+						/etc/passwd:root:x:0:0:root:/root:/bin/bash
+
+						## `-h` => Dateiname nicht ausgeben
+						$ grep -h root /etc/passwd
+						root:x:0:0:root:/root:/bin/bash
+
+						## `-l` => nur Dateinamen ausgeben, die Muster enthält
+						$ grep -l root /etc/passwd
+						/etc/passwd
+
+						## `-q` => nichts ausgeben, nur passenden Exit Status setzen
+						$ grep -q alice /etc/passwd && echo "User alice existiert"
+						$ grep -q alice /etc/passwd || echo "kein User alice"
+						~~~
+
+						Details siehe [`man grep`](https://man7.org/linux/man-pages/man1/grep.1.html).
+
+						Siehe auch: [Reguläre Ausdrücke](https://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck).
+					</section>
+					<section id="cmd-cut" data-markdown>
+						### `cut` - Spalten einer Zeile ausgeben/entfernen
+
+						~~~console
+						## Zeilen werden in Spalten zerlegt und neu zusammengesetzt
+						## -d => gibt Trennzeichen an (Standard ist TAB)
+						## -f => Liste der auszugebenden Spalten
+						$ echo "Lorem ipsum dolor sit amet" | cut -d " " -f 1
+						Lorem
+						$ echo "Lorem ipsum dolor sit amet" | cut -d " " -f 2,3
+						ipsum dolor
+						$ echo "Lorem;ipsum;dolor;sit;amet" | cut -d ";" -f 2-4
+						ipsum;dolor;sit
+
+						## --output-delimiter=... => Trennzeichen für Ausgabe
+						$ echo "Lorem ipsum dolor" | cut --output-delimiter=, -d " " -f 2,3
+						ipsum,dolor
+
+						## -b / -c => Liste an Bytes/Characters angeben
+						$ echo "Lorem ipsum dolor sit amet" | cut -b 10-20
+						um dolor si
+						$ echo "Lorem ipsum dolor sit amet" | cut -c 1,5,20-
+						Lmit amet
+
+						## Beispiel:
+						## erste Spalte von /etc/passwd ausgeben (Benutzernamen)
+						$ cut -f 1 -d: /etc/passwd
+						root
+						daemon
+						bin
+						sys
+						...
+						~~~
+
+						Details siehe [`man cut`](https://man7.org/linux/man-pages/man1/cut.1.html)
+					</section>
+					<section id="cmd-head" data-markdown>
+						### `head` - Anfang einer Datei/stdin ausgeben
+
+						~~~console
+						$ head /etc/passwd # erste 10 Zeilen von /etc/passwd ausgeben
+						$ head -n 15 /etc/passwd # erste 15 Zeilen ausgeben
+						$ head -c 15 /etc/passwd # erste 15 Bytes ausgeben
+						$ head -n -5 /etc/passwd # alles außer letzten 5 Zeilen
+
+						## alle Zeilen außer die letzten 10 von stdin ausgeben:
+						$ cat /etc/passwd | head -n -10
+						~~~
+
+						Details siehe [`man head`](https://man7.org/linux/man-pages/man1/head.1.html)
+					</section>
+					<section id="cmd-tail" data-markdown>
+						### `tail` - nur letzte Zeilen ausgeben
+
+						~~~console
+						$ tail /etc/passwd # letzte 10 Zeilen von /etc/passwd
+						$ tail -n 15 /etc/passwd # letzte 15 Zeilen ausgeben
+						$ tail -c 15 /etc/passwd # letzte 15 Bytes ausgeben
+						$ tail -n +5 /etc/passwd # alles außer erste 5 Zeilen
+
+						## alle Zeilen außer erste 10 von stdin ausgeben:
+						$ cat /etc/passwd | tail -n +10
+
+						## `-f` => auf neue Zeilen warten und ausgeben:
+						## letzte 10 Zeilen ausgeben und warten/ausgeben,
+						## wenn neue Zeilen hinzukommen.
+
+						## Nützlich zum Mitlesen von Logs:
+						$ tail -f /var/log/messages
+						~~~
+
+						Details siehe [`man tail`](https://man7.org/linux/man-pages/man1/tail.1.html)
+					</section>
+					<section id="cmd-sort" data-markdown>
+						### `sort` - Zeilen sortieren
+
+						~~~console
+						$ cat hello.txt | sort
+						Hello Sea!
+						Hello World!
+
+						## `-r` => umgekehrte Reihenfolge
+						$ sort -r hello.txt
+						Hello World!
+						Hello Sea!
+
+						## `-u` => doppelte Zeilen entfernen
+						$ sort duplicates.txt
+						1
+						2
+						2
+						3
+						$ sort -u duplicates.txt
+						1
+						2
+						3
+
+						## `-n` => Zahlen richtig sortieren
+						$ sort numbers.txt
+						1
+						1000
+						234
+						39
+						543
+						$ sort -n numbers.txt
+						1
+						39
+						234
+						543
+						1000
+
+						## `-k` / `--key` => nach anderer Spalte sortieren
+						$ sort -k 1 keys.txt # sort keys.txt
+						a 5 M
+						b 4 R
+						c 3 g
+						d 2 J
+						e 1 n
+						$ sort -k 2 keys.txt
+						e 1 n
+						d 2 J
+						c 3 g
+						b 4 R
+						a 5 M
+						$ sort -k 3 keys.txt
+						d 2 J
+						a 5 M
+						b 4 R
+						c 3 g
+						e 1 n
+						~~~
+
+						Details siehe [`man sort`](https://man7.org/linux/man-pages/man1/sort.1.html)
+					</section>
+					<section id="cmd-wc" data-markdown>
+						### `wc` - Zeichen zählen
+
+						~~~console
+						$ echo "Hello World!" > hello.txt
+						$ echo "Hello Sea!" >> hello.txt
+						$ cat hello.txt | wc
+						      2       4      24
+						$ wc hello.txt
+						 2  4 24 hello.txt
+
+						## `-l` / `-w` / `-c` => Zeilen/Wörter/Bytes zählen
+						$ cat hello.txt | wc -l
+						2
+						$ cat hello.txt | wc -w
+						4
+						$ cat hello.txt | wc -c
+						24
+						~~~
+
+						Details siehe [`man wc`](https://man7.org/linux/man-pages/man1/wc.1.html)
+					</section>
+					<section id="cmd-sed" data-markdown>
+						### `sed` - Text-Stream bearbeiten
+
+						~~~console
+						### Basis-Verwendung
+						## $script auf stdin anwenden und auf stdout ausgeben
+						$ sed "$script"
+
+						## auf Inhalt von input*.txt anwenden, auf stdout ausgeben
+						$ sed "$script" input.txt
+						$ sed "$script" input1.txt input2.txt input3.txt
+
+						## `-i` => Dateien "in-place" bearbeiten
+						## Inhalt von file*.txt gemäß "$script" bearbeiten
+						$ sed "$script" -i file*.txt
+
+						### sed-Syntax
+						## $script besteht aus ein oder mehr Kommandos.
+						## Kommandos sind durch `;` getrennt und können
+						## in `{}` gruppiert werden
+						## Ein Kommando besteht aus '&lt;Zeilenangabe&gt;&lt;Befehl&gt;'
+
+						## Zeilenangaben:
+						## &lt;leer&gt; => trifft auf jede Zeile zu
+						## &lt;Nummer&gt; => trifft auf Zeile &lt;Nummer&gt; zu
+						## &lt;Start&gt;,&lt;Ende&gt; => trifft auf Zeilen &lt;Start&gt; bis &lt;Ende&gt;
+						## /&lt;RegEx&gt;/ => Zeilen, auf die RegEx matcht
+
+						## Befehle:
+						## `p` => Zeile ausgeben
+						## `d` => Zeile löschen
+						## `s/&lt;RegEx&gt;/&lt;Ersatz&gt;/` => Suchen/Ersetzen mit RegEx
+						## `s/&lt;RegEx&gt;/&lt;Ersatz&gt;/g` => alle Vorkommen ersetzen
+						## `s/&lt;RegEx&gt;/&lt;Ersatz&gt;/i` => case-insensitive ersetzen
+
+						### Beispiele:
+						$ sed '1,5d'       # Zeilen 1-5 löschen/nicht ausgeben
+						$ sed '4p;d'       # Zeile 4 ausgeben, alles andere löschen
+						$ sed '/foo/d'     # Zeilen löschen, in denen 'foo' vorkommt
+						$ sed 's/foo/bar/' # zeilenweise "foo" mit "bar" ersetzen
+						$ sed 's/\t.*//'   # Tab und alles danach entfernen
+						~~~
+
+						`sed` ist schon eine eigene Skriptsprache, für mehr Details siehe
+						daher [`man sed`](https://man7.org/linux/man-pages/man1/sed.1.html),
+						[Reguläre Ausdrücke](https://de.wikipedia.org/wiki/Regul%C3%A4rer_Ausdruck)
+						und das noch mächtigere [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html)!
+					</section>
+					<section id="cmd-tee" data-markdown>
+						### `tee` - Pipe-Stream in Dateien kopieren
+
+						~~~console
+						## `tee` schreibt von stdin zu stdout
+						## *und* in die angegebene(n) Datei(en):
+						$ echo "Hello World!" | tee hello.txt world.txt | cat
+						Hello World!
+						$ cat hello.txt
+						Hello World!
+						$ cat world.txt
+						Hello World!
+
+						## Dateiinhalte werden überschrieben:
+						$ echo "Hello Sea!" | tee hello.txt | cat
+						Hello Sea!
+						$ cat hello.txt
+						Hello Sea!
+
+						## `-a` => neue Inhalte an Dateien anhängen
+						$ echo "Hello World!" | tee -a hello.txt | cat
+						Hello World!
+						$ cat hello.txt
+						Hello Sea!
+						Hello World!
+						~~~
+
+						Details siehe [`man tee`](https://man7.org/linux/man-pages/man1/tee.1.html)
+					</section>
+					<section id="cmd-tr" data-markdown>
+						### `tr` - Zeichen austauschen
+
+						~~~console
+						## Buchstabe "o" durch "O" ersetzen
+						$ echo "Hello World" | tr o O
+						HellO WOrld
+
+						## Buchstaben "l" und "o" tauschen
+						$ echo "Hello World" | tr ol lo
+						Heool Wlrod
+
+						## Buchstaben durch Zahlen ersetzen
+						$ echo "Hello World" | tr loe 103
+						H3110 W0r1d
+
+						## Buchstaben klein schreiben und Zahlen zensieren
+						$ echo "Hello World 1234" | tr HE123 heX
+						hello World XXX4
+
+						## alle Kleinbuchstaben zensieren
+						$ echo "Hello World" | tr '[:lower:]' x
+						Hxxxx Wxxxx
+						~~~
+
+						Details siehe [`man tr`](https://man7.org/linux/man-pages/man1/tr.1.html)
+					</section>
+					<section id="cmd-rev" data-markdown>
+						### `rev` - Zeichenweise rückwärts ausgeben
+
+						~~~console
+						$ echo "Hello World" | rev
+						dlroW olleH
+
+						$ echo Hello > test
+						$ echo World >> test
+						$ rev test
+						olleH
+						dlroW
+						~~~
+
+						Details siehe [`man rev`](https://man7.org/linux/man-pages/man1/rev.1.html)
+					</section>
+					<section id="cmd-tac" data-markdown>
+						### `tac` - Zeilenreihenfolge umkehren
+
+						~~~console
+						## `tac` ist wie `cat` in umgekehrter Zeilenreihenfolge
+						$ cat hello.txt | tac
+						Hello Sea!
+						Hello World!
+
+						$ cat hello.txt
+						Hello World!
+						Hello Sea!
+						~~~
+
+						Details siehe [`man tac`](https://man7.org/linux/man-pages/man1/tac.1.html)
+					</section>
+				</section>
+
+				<section>
+					<section id="scripting-cmds" data-markdown>
+						## Automatisieren in Skripten
+
+						* [`find`](#cmd-find) - Finden von Dateien
+						* [`xargs`](#cmd-xargs) - stdin in Befehlszeile umwandeln
+						* [`sleep`](#cmd-sleep) - Skript für bestimmte Zeit anhalten
+						* [`date`](#cmd-date) - Zeit/Datum ausgeben und formatieren
+						* [`which`](#cmd-which) - absoluten Pfad von Kommandos ermitteln
+						* [`basename`](#cmd-basename) - Dateiname aus Pfad extrahieren
+						* [`dirname`](#cmd-dirname) - Verzeichnis aus Pfad extrahieren
+						* [`mktemp`](#cmd-mktemp) - temporäre Datei/Verzeichnis erstellen
+					</section>
+					<section id="cmd-find" data-markdown>
+						### `find` - Finden von Dateien
+
+						~~~console
+						## rekursiv Dateien und Verzeichnisse auflisten
+						$ find # Dateien/Verzeichnisse im Arbeitsverzeichnis
+						$ find /etc # Dateien/Verzeichnisse in /etc/
+
+						### Filter
+						## `-name` => nach Datei-/Verzeichnisname auflisten
+						$ find -name Readme # alle "Readme" Dateien/Verzeichnisse finden
+						$ find -name '*.html' # alle *.html-Dateien finden
+
+						## `-iname` => wie `-name` aber case-insensitive
+						$ find -iname readme # findet auch "Readme" und "README"
+
+						## `-type` => Typ angeben: "f" Datei, "d" Verzeichnis ...
+						$ find -type f # nur Dateien finden
+						$ find -type d # nur Verzeichnisse finden
+
+						## `-maxdepth` => maximale Suchtiefe
+						$ find -maxdepth 3 # maximal 3 Ebenen tief suchen
+
+						## `-user` => nach Besitzer filtern
+						$ find -user bob # nur Dateien/Verzeichnisse von "bob" finden
+
+						### Aktionen
+						## `-print` => gefundene Dateien ausgeben
+						## (Standard, wenn keine andere Aktion angegeben)
+
+						## `-delete` => löschen
+						$ find -name '*.html' -delete # rekursiv *.html-Dateien löschen
+
+						## `-exec` => Befehl für jeden Treffer ausführen
+						## `{}` wird durch aktuellen Treffer ersetzt
+						## `+` beendet Befehl
+						$ find -name '*.html' -exec rm {} + # *.html-Dateien löschen
+
+						## `print0` => Ausgabe mit Null-Bytes getrennt
+						## das erlaubt es besser mit Sonderzeichen wie Tabs,
+						## Leerzeichen und Zeilenumbrüchen weiterzuarbeiten
+						## (Null-Bytes können in Pfaden nicht vorkommen)
+						$ find /etc -print0 | xargs -0 -n 1 echo
+						## siehe `xargs -0`
+						~~~
+
+						Für mehr siehe [`man find`](https://man7.org/linux/man-pages/man1/find.1.html)
+					</section>
+					<section id="cmd-xargs" data-markdown>
+						### `xargs` - stdin in Befehlszeile umwandeln
+
+						~~~console
+						## `xargs` fügt stdin an die Befehlszeile an:
+						## äquivalent zu `echo Hello World`
+						$ echo Hello World | xargs echo
+						Hello World
+						## äquivalent zu `cat /etc/passwd /etc/group`
+						$ echo /etc/passwd /etc/group | xargs cat
+						...
+
+						## `-n` => maximale Anzahl von Argumenten
+						## äquivalent zu `echo Hello; echo World`
+						$ echo Hello World | xargs -n 1 echo
+						Hello
+						World
+
+						## `-d` / `--delimiter` => Trennzeichen angeben
+						$ echo "Hello,World" | xargs -d "," echo
+						Hello World
+
+						## `-0` => Null-Byte als Trennzeichen verwenden
+						## das erlaubt es besser mit Sonderzeichen wie Tabs,
+						## Leerzeichen und Zeilenumbrüchen umzugehen
+						## (Null-Bytes kommen in Text nicht vor)
+
+						## Null-Byte als Trenner verwenden, um jeden Pfad inkl.
+						## Leer-/Sonderzeichen mit `echo` einzeln auszugeben
+						## (`find -prin0` gibt Pfade mit Null-Byte getrennt aus)
+						$ find /etc -print0 | xargs -0 -n 1 echo
+						~~~
+
+						Details siehe [`man xargs`](https://man7.org/linux/man-pages/man1/xargs.1.html)
+					</section>
+					<section id="cmd-sleep" data-markdown>
+						### `sleep` - Skript für bestimmte Zeit anhalten
+
+						~~~console
+						$ sleep 10  # 10 Sekunden warten
+						$ sleep 300 # 5 Minuten warten
+						$ sleep 5m  # 5 Minuten warten
+						$ sleep 1h  # 1 Stunde warten
+						~~~
+
+						Details siehe [`man sleep`](https://man7.org/linux/man-pages/man1/sleep.1.html)
+					</section>
+					<section id="cmd-date" data-markdown>
+						### `date` - Zeit/Datum ausgeben und formatieren
+
+						~~~console
+						$ date
+						Fr 2. Okt 17:09:05 CEST 2020
+
+						## `+` => leitet Format-String ein
+						## `%` => Zeichen für Formatvariable:
+						## '%Y' = Jahr, '%m' = Monat, '%d' = Tag
+						## '%F' = '%Y-%m-%d' => volles Datum (mehr siehe man Page)
+						$ date +%F
+						2020-10-02
+						$ date +%T
+						17:09:05
+
+						$ date "+Stunde %H am %d. Tag im Monat %B"
+						Stunde 17 am 02. Tag im Monat Oktober
+
+						## -d => anderen Zeitpunkt als 'jetzt' verwenden
+						$ date -d "2021-01-01" "+Wochentag: %A"
+						Wochentag: Freitag
+						## relative Angaben
+						$ date -d "2 days ago" "+vorgestern war: %A"
+						vorgestern war: Mittwoch
+
+						## -d @ => Unix-Timestamp umrechnen
+						$ date -d @1600000000 "+%F %T"
+						2020-09-13 14:26:40
+
+						## Beispielverwendung in Skripten:
+						$ uhrzeit="$(date +%T)"
+						$ datum="$(date +%F)"
+						$ logfile="output-$datum.log"
+						$ echo "Skript wurde um $uhrzeit ausgeführt" > "$logfile"
+						~~~
+
+						Details siehe [`man date`](https://man7.org/linux/man-pages/man1/date.1.html)
+					</section>
+					<section id="cmd-which" data-markdown>
+						### `which` - absoluten Pfad von Kommandos ermitteln
+
+						~~~console
+						$ which bash
+						/bin/bash
+						$ which myscript.sh
+						/home/alice/bin/myscript.sh
+						~~~
+
+						Siehe [`$PATH`](#env-PATH)
+
+						~~~sh
+						## Beispielverwendung in Skripten:
+						if which git 2>/dev/null; then
+							echo "git ist installiert"
+						else
+							echo "Fehler: git ist nicht installiert" >&2
+							exit 1
+						fi
+						~~~
+
+						Details siehe [`man which`](https://linux.die.net/man/1/which).
+					</section>
+					<section id="cmd-basename" data-markdown>
+						### `basename` - Dateiname aus Pfad extrahieren
+
+						~~~console
+						## Datei- oder letzten Verzeichnisname aus Pfad extrahieren
+						## (Pfade müssen nicht existieren dafür)
+						$ basename ./projects/nicht-existent/Readme.md
+						Readme.md
+						$ basename /home/alice/
+						alice
+
+						## Dateiendung entfernen
+						$ basename bin/myscript.sh .sh
+						myscript
+
+						## -a => mehrere Pfade angeben
+						$ basename -a /etc/passwd /etc/group /var/log/messages
+						passwd
+						group
+						messages
+
+						## -z => Null-Byte als Trenner verwenden
+						## (siehe `xargs -0` für Erklärung)
+						$ basename -az /etc/passwd /etc/group | xargs -0 -L 1 echo
+						passwd
+						group
+						~~~
+
+						Details siehe [`man basename`](https://man7.org/linux/man-pages/man1/basename.1.html)
+					</section>
+					<section id="cmd-dirname" data-markdown>
+						### `dirname` - Verzeichnis aus Pfad extrahieren
+
+						~~~console
+						## Verzeichnisname aus Pfad extrahieren
+						## (Pfade müssen nicht existieren dafür)
+						$ dirname ./projects/nicht-existent/Readme.md
+						./projects/nicht-existent
+						$ dirname /home/alice/
+						/home
+
+						$ dirname /etc/passwd /etc/group /var/log/messages
+						/etc
+						/etc
+						/var/log
+
+						## -z => Null-Byte als Trenner verwenden
+						## (siehe `xargs -0` für Erklärung)
+						$ dirname -z /etc/passwd /etc/group | xargs -0 -L 1 echo
+						/etc
+						/etc
+
+						## Beispielverwendung in Skripten:
+						$ dir="$(dirname "$input_file")"
+						$ cd "$dir"
+						~~~
+
+						Details siehe [`man dirname`](https://man7.org/linux/man-pages/man1/dirname.1.html)
+					</section>
+					<section id="cmd-mktemp" data-markdown>
+						### `mktemp` - temporäre Datei/Verzeichnis erstellen
+
+						~~~console
+						## Datei mit zufälligem Namen in temporärem Ordner
+						## erstellen und den Namen ausgeben.
+						## Das ist v.a. für Skripte nützlich, wenn man
+						## Dateien/Ordner erstellen muss, ohne einen festen,
+						## d.h. *immer gleichen* Pfad angeben zu müssen
+						$ mktemp
+						/tmp/tmp.yIiL1mYvxk
+
+						## `-d` => Verzeichnis statt Datei erstellen
+						$ mktemp -d
+						/tmp/tmp.DOQXMfhpOz
+
+						## es kann ein Muster angegeben werden
+						## 'X' wird durch generierte Zeichen ersetzt
+						$ mktemp /tmp/script-output-XXXX
+						/tmp/script-output-PUzt
+
+						## Beispielverwendung in Skripten
+						$ outfile="$(mktemp)"
+						$ echo "Speichere Ausgabe in $outfile"
+						Speichere Ausgabe in /tmp/tmp.mciyaVBi6O
+						$ echo Hello World > "$outfile" # in Datei schreiben
+						$ cat "$outfile" # Inhalt wieder ausgeben
+						Hello World
+						$ rm "$outfile" # Aufräumen nicht vergessen
+						~~~
+
+						Details siehe [`man mktemp`](https://man7.org/linux/man-pages/man1/mktemp.1.html)
+					</section>
+				</section>
+
+				<section>
+					<section id="archive-cmds" data-markdown>
+						## Dateien archivieren und runterladen
+
+						* [`md5sum`](#cmd-md5sum) - Checksummen erstellen/prüfen
+						* [`gzip`](#cmd-gzip) - Daten komprimieren
+						* [`tar`](#cmd-tar) - Archive erstellen/entpacken
+						* [`curl`](#cmd-curl) - Web-Requests ausführen
+					</section>
+					<section id="cmd-md5sum" data-markdown>
+						### `md5sum` - Checksummen erstellen/prüfen
+
+						~~~console
+						$ md5sum hello.txt
+						6c25b71a12d32627055af1db471f7c57  hello.txt
+
+						## `-c` => Checksummen von stdin lesen und überprüfen
+						$ echo "6c25b71a12d32627055af1db471f7c57  hello.txt" | md5sum -c
+						hello.txt: OK
+						$ echo "00000000000000000000000000000000  hello.txt" | md5sum -c
+						hello.txt: FAILED
+						md5sum: WARNING: 1 computed checksum did NOT match
+						~~~
+
+						Details siehe [`man md5sum`](https://man7.org/linux/man-pages/man1/md5sum.1.html).
+
+						Siehe auch [`man sha1sum`](https://man7.org/linux/man-pages/man1/sha1sum.1.html).
+					</section>
+					<section id="cmd-gzip" data-markdown>
+						### `gzip` - Daten komprimieren
+
+						~~~console
+						## Datei komprimieren
+						$ gzip hello.txt
+						$ ls hello.*
+						hello.txt.gz
+
+						$ echo "Hello World" | gzip > hello.txt.gz
+
+						## `-d` => Datei dekomprimieren
+						$ gzip -d < hello.txt.gz
+						Hello World
+
+						## alias `gunzip`
+						$ gunzip hello.txt.gz
+						$ ls hello.*
+						hello.txt
+
+						## Kompressionsstufe angeben:
+						## `-1` => schnellste/geringste
+						## `-9` => beste/langsamste
+						## `-6` ist Standard
+
+						## Aliasse
+						$ gunzip # gzip -d
+						$ zcat   # gzip -d | cat
+						$ zless  # gzip -d | less
+						$ zgrep  # gzip -d | grep
+						~~~
+
+						Details siehe [`man gzip`](https://linux.die.net/man/1/gzip)
+
+						Siehe auch:
+						[`zcat`](https://linux.die.net/man/1/zcat),
+						[`zless`](https://linux.die.net/man/1/zless),
+						[`zgrep`](https://linux.die.net/man/1/zgrep),
+						[`xz`](https://linux.die.net/man/1/xz),
+						[`bzip2`](https://linux.die.net/man/1/bzip2)
+					</section>
+					<section id="cmd-tar" data-markdown>
+						### `tar` - Archive erstellen/entpacken
+
+						~~~console
+						## `-c` => Archiv erstellen
+						$ tar -c hello.txt foo bar > archive.tar
+
+						## `-t` => Archivinhalt auflisten
+						$ tar -t < archive.tar
+						hello.txt
+						foo
+						bar
+
+						## `-x` => Inhalt im Arbeitsverzeichnis entpacken
+						$ rm hello.txt
+						$ ls hello.txt
+						ls: cannot access 'hello.txt': No such file or directory
+						$ tar -x < archive.tar
+						$ ls hello.txt
+						hello.txt
+
+						## einzelne Datei extrahieren
+						$ tar -x < archive.tar hello.txt
+
+						## `-f` => Ein-/Ausgabedatei angeben
+						$ tar -cf archive.tar hello.txt # erstellen
+						$ tar -tf archive.tar           # auflisten
+						$ tar -xf archive.tar           # entpacken
+
+						## `-z` / `-J` => mit gzip/bzip2 de-/komprimieren
+						$ tar -czf archive.tar.gz hello.txt # erstellen
+						$ tar -tzf archive.tar.gz           # auflisten
+						$ tar -xzf archive.tar.gz           # entpacken
+						~~~
+
+						Details siehe [`man tar`](https://man7.org/linux/man-pages/man1/tar.1.html)
+					</section>
+					<section id="cmd-curl" data-markdown>
+						### `curl` - Web-Requests ausführen
+
+						~~~console
+						$ curl https://ipecho.net/plain
+						12.234.45.67
+
+						## Wetterbericht (=
+						$ curl https://wttr.in/Berlin
+
+						## `-i` => Antwort-Header ausgeben
+						$ curl -i https://github.com/BDSU/workshops/archive/master.tar.gz
+						HTTP/1.1 302 Found
+						content-type: text/html; charset=utf-8
+						server: GitHub.com
+						status: 302 Found
+						location: https://codeload.github.com/BDSU/workshops/tar.gz/master
+
+						&lt;html&gt;&lt;body&gt;You are being &lt;a href="https://codeload.github.com/BDSU/workshops/tar.gz/master"&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;
+
+						## `-L` => Weiterleitungen folgen
+						## Workshop-Archiv herunterladen
+						$ curl -L https://github.com/BDSU/workshops/archive/master.tar.gz > workshops.tar.gz
+						~~~
+
+						Details siehe [`man curl`](https://man7.org/linux/man-pages/man1/curl.1.html).
+
+						Siehe auch [`wget`](https://man7.org/linux/man-pages/man1/wget.1.html).
+					</section>
+				</section>
 			</div>
 		</div>
 
@@ -1863,6 +3250,13 @@
 
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+
+			Reveal.on('ready', event => {
+				// open all external links in new tab
+				document.querySelectorAll('a[href^=http]').forEach(link => {
+					link.target = '_blank';
+				});
 			});
 		</script>
 	</body>
