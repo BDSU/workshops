@@ -29,7 +29,7 @@
 					<section data-markdown># Webserver-Konfiguration für Einsteiger</section>
 					<section data-markdown>
 						## Inhalt
-						Konfiguration eines Apache Webservers
+						Konfiguration eines Apache-Webservers
 
 						* [Konfiguration: wo und wie bearbeiten?](#configs)
 						* [Mehrere Domains konfigurieren](#vhosts)
@@ -53,7 +53,7 @@
 						* Konfiguration sind Textdateien
 							* -> mit beliebigem Editor bearbeitbar
 						* Nach Änderung Konfiguration neu laden, z.B.:
-							* `systemctl reload apache2`
+							* `systemctl reload apache2.service`
 							* `apache2ctl graceful`
 							* `/etc/init.d/apache2 restart`
 					</section>
@@ -290,7 +290,7 @@
 							# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 							~~~
 
-							* [`User`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#user) / [`Group`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#group): User/Gruppe mit dessen Rechten Apache läuft
+							* [`User`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#user) / [`Group`](https://httpd.apache.org/docs/2.4/mod/mod_unixd.html#group): User/Gruppe, mit dessen Rechten Apache läuft
 							* [`Listen`](https://httpd.apache.org/docs/2.4/en/mod/mpm_common.html#listen): Welche Port(s)/IP(s) Apache verwendet
 							* [`ErrorLog`](https://httpd.apache.org/docs/2.4/en/mod/core.html#errorlog): Pfad zur Log-Datei für Fehler
 							* [`Include`](https://httpd.apache.org/docs/2.4/en/mod/core.html#include) / [`IncludeOptional`](https://httpd.apache.org/docs/2.4/en/mod/core.html#includeoptional): Einbinden weiterer Configs
@@ -302,10 +302,10 @@
 							Unter Debian-basierten Distributionen sind die Configs **per Konvention** auf mehrere Dateien vergeteilt:
 							* `*-available/*.conf`: verfügbare Configs
 							* `*-enabled/*.conf`: eingebundene Configs
-								* als Symlink zu `*-available/*.conf`
+								* als [Symlink](https://de.wikipedia.org/wiki/Symbolische_Verkn%C3%BCpfung) zu `*-available/*.conf`
 							* Configs können per Befehl verlinkt/entfernt werden:
-								* `a2enconf` / `a2enmod` / `a2ensite`
-								* `a2disconf` / `a2dismod` / `a2dissite`
+								* [`a2enconf`](https://manpages.debian.org/buster/apache2/a2enconf.8.en.html) / [`a2enmod`](https://manpages.debian.org/buster/apache2/a2enmod.8.en.html) / [`a2ensite`](https://manpages.debian.org/buster/apache2/a2ensite.8.en.html)
+								* [`a2disconf`](https://manpages.debian.org/buster/apache2/a2disconf.8.en.html) / [`a2dismod`](https://manpages.debian.org/buster/apache2/a2dismod.8.en.html) / [`a2dissite`](https://manpages.debian.org/buster/apache2/a2dissite.8.en.html)
 						</script>
 					</section>
 					<section data-markdown>
@@ -317,12 +317,28 @@
 							* `sites-*/*.conf`: [Virtual Hosts](#vhosts)
 						</script>
 					</section>
+					<section id="enable-modules" data-markdown>
+						## Erweiterungsmodule aktivieren
+
+						Einige Direktiven stehen nur zur Verfügung, wenn die entsprechenden
+						Module erweitert sind. In welchem Modul eine Direktive enthalten ist,
+						wird in der Dokumentation immer angegeben.
+
+						Beispiel: Module für Verwendung als [Reverse Proxy](#reverse-proxy)
+						~~~sh
+						a2enmod headers # für RequestHeader
+						a2enmod rewrite # zur Verwendung der RewriteEngine
+						a2enmod proxy proxy_http # zur Weiterleitung als HTTP-Proxy
+						a2enmod proxy_wstunnel # zur Weiterleitung von WebSockets
+						~~~
+					</section>
 					<section data-markdown>
 						<script type="text/template">
 							## Tipp für Config-Änderungen
 
 							Um unangenehme Überraschungen beim Neuladen zu verhindern, kann
-							die aktuelle Config zuerst mit `apache2ctl` verifiziert werden:
+							die aktuelle Config zuerst mit [`apache2ctl`](https://httpd.apache.org/docs/2.4/programs/apachectl.html)
+							verifiziert werden:
 							~~~sh
 							apache2ctl -t
 							> Syntax OK
@@ -372,8 +388,8 @@
 					<section data-markdown>
 						## Virtual Hosts - Auflösung
 
-						Die _VirtualHost_-Abschnitte werden in der Reihenfolge, in der sie
-						definiert/eingebunden werden getestet. Der erste Block mit passendem
+						Die _VirtualHost_-Abschnitte werden in der Reihenfolge getestet, in der sie
+						definiert/eingebunden werden. Der erste Block mit passendem
 						[`ServerName`](https://httpd.apache.org/docs/2.4/en/mod/core.html#servername) bzw.
 						[`ServerAlias`](https://httpd.apache.org/docs/2.4/en/mod/core.html#serveralias)
 						wird verwendet.
@@ -454,7 +470,7 @@
 						`certbot` kümmert sich dann über die Kommunikation mit _Let's Encrypt_
 						und die Verifizierung der Domain:
 
-						Die signierten Dateien werden unter `/var/www/web.bdsu.it/.well-known/acme-challenge` im
+						Die signierten Dateien werden unter `/var/www/web.bdsu.it/.well-known/acme-challenge`
 						erstellt und danach wieder aufgeräumt und müssen dann über
 						`http://web.bdsu.it/.well-known/acme-challenge/` erreichbar sein.
 					</section>
@@ -479,17 +495,26 @@
 						</script>
 					</section>
 					<section data-markdown>
+						## empfohlene SSL-Konfiguration
+
+						* jeweils aktuell empfohlene Optionen im [Mozilla SSL Configuration Generator](https://ssl-config.mozilla.org/#server=apache) zu finden
+							* Deaktivieren veralteter und unsicherer Verschlüsselung (SSL, &lt;TLS 1.2)
+							* setzen eines [HSTS-Headers](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security), damit Browser direkt auf HTTPS umleiten
+						* für alle Anfragen [HTTPS erzwingen](#force-https)
+						* Überprüfen der Server-Konfiguration mit [SSL Labs Testseite](https://www.ssllabs.com/ssltest/index.html)
+					</section>
+					<section data-markdown>
 						<script type="text/template">
 							## Zertifikate erneuern
 
-							Die Zertifikate von _Let's Encrypt_ sind nur 90 Tage gültig, können
-							mit `certbot` aber einfach erneuert werden:
+							Die Zertifikate von _Let's Encrypt_ sind [nur 90 Tage gültig](https://letsencrypt.org/2015/11/09/why-90-days.html),
+							können mit `certbot` aber einfach erneuert werden:
 							~~~sh
 							certbot renew
 							~~~
 
 							Beim Erstellen wurde die Konfiguration (i.e. Domain und
-							DocumentRoot) gespeichert, womit `cerbot` die Domain zum Verlängern
+							_DocumentRoot_) gespeichert, womit `certbot` die Domain zum Verlängern
 							wieder verifizieren kann.
 
 							Die Konfiguration kann man [**manuell** ändern](https://certbot.eff.org/docs/using.html#modifying-the-renewal-configuration-file)
@@ -509,6 +534,21 @@
 						per E-Mail an die bei der Einrichtung angegebene E-Mail.
 					</section>
 					<section data-markdown>
+						## Erneuerte Zertifikate laden
+
+						Wenn `certbot` ein Zertifikat erneuert hat, muss `apache` das neue
+						Zertifikat laden. Dies kann durch das Ausführen von
+						`systemctl reload apache2.service` nach einer Erneuerung
+						automatisiert werden. Dafür kann ein [`post-hook`](https://certbot.eff.org/docs/using.html#renewing-certificates)
+						in der [Konfigurationsdatei `cli.ini`](https://certbot.eff.org/docs/using.html#configuration-file)
+						gesetzt werden:
+
+						~~~ini
+						# /etc/letsencrypt/cli.ini
+						post-hook = systemctl reload apache2.service
+						~~~
+					</section>
+					<section data-markdown>
 						## Zertifikate verwalten
 						~~~sh
 						# Zertifikat neu ausstellen mit weiterer Domain
@@ -525,7 +565,7 @@
 						certbot delete --cert-name web.bdsu.it
 						~~~
 
-						Siehe [Doku für `cerbot revoke`](https://certbot.eff.org/docs/using.html#revoking-certificates).
+						Siehe [Doku für `certbot revoke`](https://certbot.eff.org/docs/using.html#revoking-certificates).
 					</section>
 				</section>
 
@@ -637,9 +677,10 @@
 							~~~
 
 							* [AuthType](https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authtype): Art der Authentifizierungsmethode
+							* [AuthName](https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authname): Prompt für den Benutzer
 							* [AuthBasicProvider](https://httpd.apache.org/docs/2.4/mod/mod_auth_basic.html#authbasicprovider) / [AuthUserFile](https://httpd.apache.org/docs/2.4/mod/mod_authn_file.html#authuserfile):
 								einfache Datei als "Benutzerdatenbank"
-							* [AuthName](https://httpd.apache.org/docs/2.4/mod/mod_authn_core.html#authname): Prompt für den Benutzer
+							* [Require](https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#require): bestimmt, welche User Zugriff haben
 						</script>
 					</section>
 					<section data-markdown>
@@ -760,16 +801,22 @@
 								ServerAlias *.web.bdsu.it inter.web.bdsu.it
 
 								# alle Anfragen als Proxy weiterleiten
-								ProxyPass / http://localhost:3000/
+								ProxyPass        / http://localhost:3000/
 
 								# in Anwort-Header automatisch die Domain durch eigene Domain ersetzen
-								ProxyPassReverse /          http://localhost:3000/
+								ProxyPassReverse / http://localhost:3000/
+
+								# der Anwendung per Header mitteilen, dass nur eine HTTP-Verbindung zum Browser besteht
+								# wenn eine verschlüsselte Verbindung besteht, zu "https" ändern
+								RequestHeader set X-Forwarded-Proto "http"
 							</VirtualHost>
 							~~~
 
 							Siehe:
-							[`ProxyPass`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypass) und
-							[`ProxyPassReverse`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypassreverse)
+							[`ProxyPass`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypass),
+							[`ProxyPassReverse`](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html#proxypassreverse),
+							[`RequestHeader`](https://httpd.apache.org/docs/current/mod/mod_headers.html#requestheader) und
+							[benötigte Module](#enable-modules)
 						</script>
 					</section>
 					<section data-markdown>
@@ -850,7 +897,7 @@
 					</section>
 					<section data-markdown>
 						<script type="text/template">
-							## Zugriff auf vertrauliche Daten verhindern
+							## Zugriff vertraulicher Daten sperren
 
 							~~~apache
 							# Wird git zur Versionsverwaltung verwendet und ist der .git Ordner
@@ -866,12 +913,17 @@
 							<FilesMatch "^\.env">
 								Require all denied
 							</FilesMatch>
+
+							# zusätzlich alle *URLs*, die ".git" oder ".env" enthalten sperren
+							<LocationMatch "\.(git|env)">
+								Require all denied
+							</LocationMatch>
 							~~~
 
 							Siehe
-							[`DirectoryMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#directorymatch) und
-							[`FilesMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#filesmatch)
-
+							[`DirectoryMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#directorymatch),
+							[`FilesMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#filesmatch) und
+							[`LocationMatch`](https://httpd.apache.org/docs/2.4/de/mod/core.html#locationmatch)
 						</script>
 					</section>
 					<section data-markdown>
@@ -925,6 +977,52 @@
 
 						Mit [`ErrorDocument`](https://httpd.apache.org/docs/2.4/de/mod/core.html#errordocument)
 						lassen sich die Fehlermeldungen/-texte anpassen.
+					</section>
+					<section id="force-https" data-markdown>
+						<script type="text/template">
+							## HTTPS erzwingen
+
+							Automatisch alle HTTP-Anfragen auf HTTPS umleiten:
+							~~~apache
+							# HTTPS für einzelne Domain erzwingen
+							<VirtualHost *:80>
+								ServerName web.bdsu.it
+								Redirect permanent / https://web.bdsu.it/
+							</VirtualHost>
+
+							# HTTPS für alle Domains erzwingen
+							# dies muss der erste/einzige Block für Port 80 sein
+							<VirtualHost *:80>
+								RewriteEngine On
+								RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=permanent,L]
+							</VirtualHost>
+							~~~
+
+							Siehe:
+							[`Redirect`](https://httpd.apache.org/docs/2.4/mod/mod_alias.html#redirect) und
+							[`RewriteRule`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewriterule)
+						</script>
+					</section>
+					<section data-markdown>
+						## einheitlicher Webroot für `certbot`
+
+						In der globalen Konfiguration kann ein gemeinsamer Webroot für alle
+						_VirtualHost_ konfiguriert werden:
+
+						~~~apache
+						RewriteEngine On
+						# RewriteRule vor allen RewriteRules in VirtualHosts anwenden
+						RewriteOptions InheritDownBefore
+
+						# acme-challenge für alle Domains zu zentralem certbot-webroot umleiten
+						RewriteCond %{REQUEST_URI} /\.well-known/acme-challenge/
+						RewriteRule ^/\.well-known/acme-challenge/(.*) /var/www/certbot-webroot/.well-known/acme-challenge/$1 [L,END]
+						~~~
+
+						Siehe:
+						[`RewriteOptions`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewriteoptions),
+						[`RewriteCond`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewritecond) und
+						[`RewriteRule`](https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html#rewriterule)
 					</section>
 				</section>
 			</div>
